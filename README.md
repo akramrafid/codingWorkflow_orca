@@ -225,8 +225,9 @@ codingWorkflow_orca/
 └── mcp/                             # Model Context Protocol configurations
     └── mcp_config.template.json     # Workspace MCP server template
 
+
 ---
 
 <p align="center">
-  Built with ❤️ for personal use
+  Built with ❤️ for <b>personal use</b>
 </p>
