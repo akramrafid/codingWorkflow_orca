@@ -224,16 +224,9 @@ codingWorkflow_orca/
 │   └── install-agents.ps1           # Global Antigravity sync script
 └── mcp/                             # Model Context Protocol configurations
     └── mcp_config.template.json     # Workspace MCP server template
-```
-
----
-
-## 📄 License
-
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
 
 ---
 
 <p align="center">
-  Built with ❤️ for <b>Google Antigravity</b>
+  Built with ❤️ for personal use
 </p>
