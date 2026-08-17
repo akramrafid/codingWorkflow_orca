@@ -1,0 +1,56 @@
+# Orca Domain Rules & Escalation Hierarchies
+# Governs authority levels, veto powers, and cross-domain handoffs.
+
+version: "1.0.0"
+
+hierarchies:
+  architecture:
+    lead: "senior-system-architect"
+    delegates:
+      - "senior-system-designer"
+      - "senior-database-architect"
+      - "senior-cloud-architect"
+    veto_power:
+      - "senior-system-architect"
+
+  security:
+    lead: "senior-security-engineer"
+    veto_power:
+      - "senior-security-engineer"
+    rules:
+      - "Security review is mandatory for all authentication, authorization, secret handling, and cryptographic changes."
+      - "Senior Security Engineer holds unilateral veto over production releases on unresolved CVEs."
+
+  visual_brand:
+    lead: "brand-guardian"
+    pipeline:
+      step_1: "pinterest-researcher"
+      step_2: "design-researcher"
+      step_3: "ux-researcher"
+      step_4: "senior-product-designer"
+      step_5_gate: "brand-guardian"
+      step_6_implementation: "senior-frontend-engineer"
+      step_7_verification: "visual-qa"
+    veto_power:
+      - "brand-guardian"
+    rules:
+      - "UI implementation cannot start without Brand Guardian approval of design tokens and high-fidelity specifications."
+      - "Visual QA must pass before task completion."
+
+  operations_deployment:
+    lead: "senior-devops-engineer"
+    delegates:
+      - "senior-mlops-engineer"
+      - "senior-cloud-architect"
+    rules:
+      - "Production deployments require DevOps approval and human confirmation unless unattended CI mode is configured."
+      - "Kubernetes or distributed clusters must not be deployed without documented architectural justification."
+
+  quality_assurance:
+    lead: "senior-qa-architect"
+    delegates:
+      - "visual-qa"
+      - "senior-performance-engineer"
+    rules:
+      - "Every completed task must provide test logs and verification evidence."
+      - "Minimum code coverage threshold of 80% on core business logic."

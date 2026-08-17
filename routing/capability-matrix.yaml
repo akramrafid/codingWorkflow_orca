@@ -1,0 +1,108 @@
+# Orca Capability Matrix
+# Maps project domains and features to required senior specialists and team formations.
+
+version: "1.0.0"
+
+domains:
+  saas_web_app:
+    name: "SaaS Web Application"
+    primary_architect: "senior-system-architect"
+    required_agents:
+      - "senior-system-architect"
+      - "senior-system-designer"
+      - "senior-product-manager"
+      - "senior-product-designer"
+      - "senior-frontend-engineer"
+      - "senior-backend-engineer"
+      - "senior-database-architect"
+      - "senior-security-engineer"
+      - "senior-devops-engineer"
+      - "senior-qa-architect"
+    design_pipeline:
+      - "pinterest-researcher"
+      - "design-researcher"
+      - "ux-researcher"
+      - "ui-designer"
+      - "brand-guardian"
+      - "visual-qa"
+
+  ai_llm_rag:
+    name: "AI / LLM & RAG Application"
+    primary_architect: "senior-system-architect"
+    required_agents:
+      - "senior-ai-engineer"
+      - "senior-llm-engineer"
+      - "senior-nlp-engineer"
+      - "senior-mlops-engineer"
+      - "senior-backend-engineer"
+      - "senior-database-architect"
+      - "senior-security-engineer"
+      - "senior-qa-architect"
+    optional_agents:
+      - "senior-ai-research-engineer"
+      - "senior-generative-ai-engineer"
+
+  classical_ml_data:
+    name: "Predictive ML & Data Lakehouse"
+    primary_architect: "senior-system-architect"
+    required_agents:
+      - "senior-machine-learning-engineer"
+      - "senior-data-engineer"
+      - "senior-mlops-engineer"
+      - "senior-database-architect"
+      - "senior-backend-engineer"
+      - "senior-qa-architect"
+    optional_agents:
+      - "senior-performance-engineer"
+
+  computer_vision_system:
+    name: "Computer Vision & Visual Analytics"
+    primary_architect: "senior-system-architect"
+    required_agents:
+      - "senior-computer-vision-engineer"
+      - "senior-deep-learning-engineer"
+      - "senior-mlops-engineer"
+      - "senior-backend-engineer"
+      - "senior-performance-engineer"
+      - "senior-qa-architect"
+
+  generative_media_multimodal:
+    name: "Generative Media & Multimodal AI"
+    primary_architect: "senior-system-architect"
+    required_agents:
+      - "senior-generative-ai-engineer"
+      - "senior-deep-learning-engineer"
+      - "senior-mlops-engineer"
+      - "brand-guardian"
+      - "senior-frontend-engineer"
+      - "senior-backend-engineer"
+
+  cloud_infrastructure_platform:
+    name: "Cloud Infrastructure & Platform Engineering"
+    primary_architect: "senior-cloud-architect"
+    required_agents:
+      - "senior-cloud-architect"
+      - "senior-devops-engineer"
+      - "senior-security-engineer"
+      - "senior-performance-engineer"
+
+feature_triggers:
+  authentication_rbac:
+    triggers: ["auth", "jwt", "oauth", "sso", "rbac", "permissions"]
+    activates: ["senior-security-engineer", "senior-backend-engineer"]
+
+  vector_search_rag:
+    triggers: ["vector", "embeddings", "rag", "pgvector", "qdrant", "pinecone", "semantic search"]
+    activates: ["senior-nlp-engineer", "senior-llm-engineer", "senior-database-architect"]
+
+  streaming_etl:
+    triggers: ["kafka", "flink", "spark", "etl", "elt", "data pipeline", "lakehouse"]
+    activates: ["senior-data-engineer"]
+
+  fine_tuning:
+    triggers: ["lora", "qlora", "sft", "dpo", "fine-tune", "custom weights"]
+    activates: ["senior-llm-engineer", "senior-deep-learning-engineer", "senior-mlops-engineer"]
+
+  visual_identity_redesign:
+    triggers: ["brand", "dark mode", "glassmorphism", "aesthetic", "redesign", "ui overhaul"]
+    activates: ["brand-guardian", "pinterest-researcher", "ui-designer", "visual-qa"]

@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OrcaRalphState",
+  "description": "Schema for Ralph autonomous task execution state tracking in Orca.",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier for the autonomous execution."
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Name of the target project or repository."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["INITIALIZING", "PLANNING", "IN_PROGRESS", "EVALUATING", "BLOCKED", "COMPLETED", "FAILED"],
+      "description": "Current lifecycle status of the Ralph loop."
+    },
+    "current_iteration": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current loop iteration counter."
+    },
+    "max_iterations": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 30,
+      "description": "Safety threshold to prevent runaway execution."
+    },
+    "active_task_id": {
+      "type": ["string", "null"],
+      "description": "ID of the task currently being executed."
+    },
+    "completed_tasks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of successfully verified task IDs."
+    },
+    "failed_tasks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of task IDs that failed evaluation."
+    },
+    "retry_counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer" },
+      "description": "Map of task_id to retry count."
+    },
+    "git_head_commit": {
+      "type": "string",
+      "description": "Current git commit hash tracking state."
+    },
+    "last_evaluator_verdict": {
+      "type": "object",
+      "properties": {
+        "verdict": { "type": "string", "enum": ["PASS", "FAIL", "NEEDS_REVISION"] },
+        "evidence_summary": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "required": [
+    "session_id",
+    "project_name",
+    "status",
+    "current_iteration",
+    "max_iterations",
+    "completed_tasks",
+    "failed_tasks"
+  ]
+}

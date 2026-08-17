@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OrcaRalphTask",
+  "description": "Schema for individual task definitions within the Orca Ralph execution engine.",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^TASK-[0-9]{3,5}$",
+      "description": "Unique task identifier (e.g. TASK-001)."
+    },
+    "title": {
+      "type": "string",
+      "description": "Brief description of the task objective."
+    },
+    "assigned_agent": {
+      "type": "string",
+      "description": "Agent name assigned to execute the task (e.g. senior-backend-engineer)."
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Task IDs that must complete successfully before this task can start."
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Specific, verifiable conditions required for completion."
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Shell commands executed to verify completion (e.g. npm test, pytest, tsc)."
+    },
+    "evidence_required": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["UNIT_TEST_LOGS", "INTEGRATION_TEST_LOGS", "LINT_CLEAN", "BUILD_SUCCESS", "SCREENSHOT", "DIFF_REVIEW"]
+      },
+      "minItems": 1,
+      "description": "Evidence types required before passing evaluation."
+    },
+    "worktree_path": {
+      "type": "string",
+      "description": "Git worktree path dedicated to this task."
+    }
+  },
+  "required": [
+    "task_id",
+    "title",
+    "assigned_agent",
+    "dependencies",
+    "acceptance_criteria",
+    "verification_commands",
+    "evidence_required"
+  ]
+}
