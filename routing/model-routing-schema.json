@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Orca Model Routing Decision Schema",
+  "description": "Schema for machine-readable model routing decisions, separating agent roles, models, and execution harnesses.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "task_class",
+    "agent_role",
+    "harness",
+    "risk_level",
+    "selected_model",
+    "selection_reason",
+    "fallback_models",
+    "review_required",
+    "review_strategy",
+    "human_approval_required",
+    "routing_metrics"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique identifier for the classified task."
+    },
+    "task_class": {
+      "type": "string",
+      "enum": [
+        "requirements",
+        "architecture",
+        "system_design",
+        "frontend",
+        "backend",
+        "database",
+        "ai",
+        "ml",
+        "dl",
+        "nlp",
+        "llm",
+        "computer_vision",
+        "devops",
+        "security",
+        "testing",
+        "research",
+        "ui_ux",
+        "documentation",
+        "review",
+        "debugging"
+      ],
+      "description": "Classified domain category of the task."
+    },
+    "agent_role": {
+      "type": "string",
+      "description": "The specialist agent role executing the task (from the 29 validated agents)."
+    },
+    "harness": {
+      "type": "string",
+      "enum": [
+        "antigravity-cli"
+      ],
+      "default": "antigravity-cli",
+      "description": "The execution runtime harness hosting the model."
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Assessed operational and security risk profile of the task."
+    },
+    "selected_model": {
+      "type": "string",
+      "enum": [
+        "Gemini 3.6 Flash",
+        "Gemini 3.5 Flash",
+        "Gemini 3.1 Pro",
+        "Claude Sonnet 4.6",
+        "Claude Opus 4.6",
+        "GPT-OSS-120B"
+      ],
+      "description": "Primary model selected for execution based on capability scoring."
+    },
+    "selection_reason": {
+      "type": "string",
+      "description": "Deterministic rationale for selecting this model over candidate models."
+    },
+    "fallback_models": {
+      "type": "array",
+      "description": "Ordered list of fallback models in case primary model is unavailable or rate-limited.",
+      "items": {
+        "type": "object",
+        "required": [
+          "model",
+          "priority",
+          "condition"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "Gemini 3.6 Flash",
+              "Gemini 3.5 Flash",
+              "Gemini 3.1 Pro",
+              "Claude Sonnet 4.6",
+              "Claude Opus 4.6",
+              "GPT-OSS-120B"
+            ]
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "condition": {
+            "type": "string",
+            "description": "Trigger condition for escalating to this fallback (e.g. quota_exhausted, latency_breach, verification_retry)."
+          }
+        }
+      }
+    },
+    "review_required": {
+      "type": "boolean",
+      "description": "Indicates whether independent model review is required before merging or completing."
+    },
+    "review_strategy": {
+      "type": "object",
+      "required": [
+        "mode",
+        "review_model",
+        "review_agent"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "cross_model_independent",
+            "same_model_fresh_context",
+            "automated_gate_only",
+            "none"
+          ],
+          "description": "Strategy for executing task review."
+        },
+        "review_model": {
+          "type": "string",
+          "description": "Model assigned to perform review (must differ from selected_model if cross_model_independent)."
+        },
+        "review_agent": {
+          "type": "string",
+          "description": "Agent role responsible for conducting the review (e.g. senior-qa-architect, senior-security-engineer)."
+        }
+      }
+    },
+    "human_approval_required": {
+      "type": "boolean",
+      "description": "Whether human sign-off is mandatory (true for critical risk, destructive DB ops, or production release)."
+    },
+    "routing_metrics": {
+      "type": "object",
+      "required": [
+        "estimated_context_tokens",
+        "latency_budget",
+        "reasoning_tier"
+      ],
+      "properties": {
+        "estimated_context_tokens": {
+          "type": "integer"
+        },
+        "latency_budget": {
+          "type": "string",
+          "enum": [
+            "sub_second",
+            "interactive",
+            "batch_relaxed"
+          ]
+        },
+        "reasoning_tier": {
+          "type": "string",
+          "enum": [
+            "tier_1_fast",
+            "tier_2_standard",
+            "tier_3_advanced",
+            "tier_4_deep_analytical"
+          ]
+        }
+      }
+    }
+  }
+}

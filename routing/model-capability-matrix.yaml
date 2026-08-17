@@ -1,0 +1,330 @@
+# Orca Model Capability Matrix
+# Declarative registry, 14-dimensional capability scorecard, and task-class routing rules.
+# Current execution harness: antigravity-cli
+
+version: "1.0.0"
+system: "Orca Agent Operating System"
+harness: "antigravity-cli"
+
+models:
+  "Gemini 3.6 Flash":
+    id: "Gemini 3.6 Flash"
+    tier: "high_throughput_fast"
+    context_window_tokens: 1048576
+    vision_capable: true
+    latency_tier: "sub_second"
+    cost_tier: "minimal"
+    strengths:
+      planning: 7.5
+      architecture: 7.0
+      coding: 8.5
+      debugging: 8.0
+      code_review: 7.5
+      reasoning: 8.0
+      research: 8.5
+      long_context_analysis: 9.5
+      ui_ux_reasoning: 8.5
+      ai_ml_reasoning: 7.5
+      mathematical_reasoning: 7.5
+      documentation: 9.0
+      testing: 8.5
+      autonomous_execution: 8.5
+    optimal_use_cases:
+      - "Rapid worker implementation (Tier 1-2 code tasks)"
+      - "Multi-modal visual inspection and screenshot analysis"
+      - "Fast unit test and fixture generation"
+      - "Documentation and schema generation"
+      - "High-throughput autonomous loop iterations"
+
+  "Gemini 3.5 Flash":
+    id: "Gemini 3.5 Flash"
+    tier: "high_throughput_fast"
+    context_window_tokens: 1048576
+    vision_capable: true
+    latency_tier: "sub_second"
+    cost_tier: "minimal"
+    strengths:
+      planning: 7.0
+      architecture: 6.5
+      coding: 8.0
+      debugging: 7.5
+      code_review: 7.0
+      reasoning: 7.5
+      research: 8.0
+      long_context_analysis: 9.0
+      ui_ux_reasoning: 8.0
+      ai_ml_reasoning: 7.0
+      mathematical_reasoning: 7.0
+      documentation: 8.5
+      testing: 8.0
+      autonomous_execution: 8.0
+    optimal_use_cases:
+      - "Fallback for Gemini 3.6 Flash when rate-limited"
+      - "Low-risk syntax fixes, linting, and boilerplate generation"
+      - "Lightweight exploratory research lookups"
+
+  "Gemini 3.1 Pro":
+    id: "Gemini 3.1 Pro"
+    tier: "deep_analytical_reasoning"
+    context_window_tokens: 2097152
+    vision_capable: true
+    latency_tier: "moderate"
+    cost_tier: "standard"
+    strengths:
+      planning: 9.5
+      architecture: 9.5
+      coding: 9.0
+      debugging: 8.5
+      code_review: 9.0
+      reasoning: 9.5
+      research: 9.5
+      long_context_analysis: 10.0
+      ui_ux_reasoning: 9.0
+      ai_ml_reasoning: 9.5
+      mathematical_reasoning: 9.0
+      documentation: 9.5
+      testing: 9.0
+      autonomous_execution: 9.0
+    optimal_use_cases:
+      - "Master system architecture and ADR synthesis"
+      - "Massive codebase refactoring across entire repository context"
+      - "Complex data engineering, lakehouse design, and distributed systems"
+      - "Cross-domain requirement decomposition and capability mapping"
+      - "Holistic multi-agent coordination design"
+
+  "Claude Sonnet 4.6":
+    id: "Claude Sonnet 4.6"
+    tier: "advanced_code_and_reasoning"
+    context_window_tokens: 200000
+    vision_capable: true
+    latency_tier: "fast"
+    cost_tier: "standard"
+    strengths:
+      planning: 9.0
+      architecture: 9.0
+      coding: 9.8
+      debugging: 9.5
+      code_review: 9.8
+      reasoning: 9.2
+      research: 8.8
+      long_context_analysis: 8.5
+      ui_ux_reasoning: 9.2
+      ai_ml_reasoning: 9.0
+      mathematical_reasoning: 8.8
+      documentation: 9.0
+      testing: 9.5
+      autonomous_execution: 9.2
+    optimal_use_cases:
+      - "Precision code implementation across frontend and backend"
+      - "Complex bug isolation and multi-file debugging"
+      - "Independent code review and adversarial PR inspection"
+      - "Strict TypeScript/Rust/Python type-checked modules"
+      - "UI component engineering and WCAG accessibility compliance"
+
+  "Claude Opus 4.6":
+    id: "Claude Opus 4.6"
+    tier: "deep_analytical_reasoning"
+    context_window_tokens: 200000
+    vision_capable: true
+    latency_tier: "deep"
+    cost_tier: "premium"
+    strengths:
+      planning: 9.8
+      architecture: 9.8
+      coding: 9.5
+      debugging: 9.8
+      code_review: 9.9
+      reasoning: 10.0
+      research: 9.6
+      long_context_analysis: 8.8
+      ui_ux_reasoning: 9.4
+      ai_ml_reasoning: 9.8
+      mathematical_reasoning: 9.8
+      documentation: 9.2
+      testing: 9.2
+      autonomous_execution: 9.5
+    optimal_use_cases:
+      - "Critical STRIDE threat modeling and zero-trust security audits"
+      - "Theoretical AI research algorithm derivation and mathematical proofs"
+      - "Critical architectural conflict arbitration"
+      - "High-stakes autonomous loop circuit breaker analysis"
+
+  "GPT-OSS-120B":
+    id: "GPT-OSS-120B"
+    tier: "open_weights_foundation"
+    context_window_tokens: 131072
+    vision_capable: false
+    latency_tier: "fast"
+    cost_tier: "minimal"
+    strengths:
+      planning: 8.0
+      architecture: 7.8
+      coding: 8.5
+      debugging: 8.0
+      code_review: 8.0
+      reasoning: 8.2
+      research: 7.8
+      long_context_analysis: 7.5
+      ui_ux_reasoning: 7.0
+      ai_ml_reasoning: 8.0
+      mathematical_reasoning: 8.0
+      documentation: 8.0
+      testing: 8.2
+      autonomous_execution: 8.0
+    optimal_use_cases:
+      - "Offline / self-hosted fallback model"
+      - "Deterministic automated test assertion evaluation"
+      - "Continuous background task monitoring"
+
+# -------------------------------------------------------------
+# TASK CLASS ROUTING PROFILES (20 Task Classes)
+# -------------------------------------------------------------
+task_class_profiles:
+  requirements:
+    primary_dimensions: ["planning", "research", "reasoning", "long_context_analysis"]
+    primary_model: "Gemini 3.1 Pro"
+    fallbacks: ["Claude Sonnet 4.6", "Gemini 3.6 Flash"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "medium"
+
+  architecture:
+    primary_dimensions: ["architecture", "reasoning", "planning", "long_context_analysis"]
+    primary_model: "Gemini 3.1 Pro"
+    fallbacks: ["Claude Opus 4.6", "Claude Sonnet 4.6"]
+    review_strategy: "cross_model_independent"
+    review_model: "Claude Sonnet 4.6"
+    default_risk: "high"
+
+  system_design:
+    primary_dimensions: ["architecture", "coding", "planning", "reasoning"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Gemini 3.1 Pro", "Gemini 3.6 Flash"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "medium"
+
+  frontend:
+    primary_dimensions: ["coding", "ui_ux_reasoning", "testing", "debugging"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Gemini 3.6 Flash", "Gemini 3.1 Pro"]
+    review_strategy: "cross_model_independent"
+    review_model: "Gemini 3.6 Flash"
+    default_risk: "medium"
+
+  backend:
+    primary_dimensions: ["coding", "debugging", "architecture", "testing"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Gemini 3.1 Pro", "Gemini 3.6 Flash"]
+    review_strategy: "cross_model_independent"
+    review_model: "Gemini 3.1 Pro"
+    default_risk: "high"
+
+  database:
+    primary_dimensions: ["architecture", "coding", "reasoning", "debugging"]
+    primary_model: "Gemini 3.1 Pro"
+    fallbacks: ["Claude Sonnet 4.6", "Claude Opus 4.6"]
+    review_strategy: "cross_model_independent"
+    review_model: "Claude Sonnet 4.6"
+    default_risk: "critical"
+
+  ai:
+    primary_dimensions: ["ai_ml_reasoning", "reasoning", "architecture", "coding"]
+    primary_model: "Gemini 3.1 Pro"
+    fallbacks: ["Claude Opus 4.6", "Claude Sonnet 4.6"]
+    review_strategy: "cross_model_independent"
+    review_model: "Claude Sonnet 4.6"
+    default_risk: "high"
+
+  ml:
+    primary_dimensions: ["ai_ml_reasoning", "coding", "mathematical_reasoning", "testing"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Gemini 3.1 Pro", "GPT-OSS-120B"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "medium"
+
+  dl:
+    primary_dimensions: ["mathematical_reasoning", "ai_ml_reasoning", "coding", "debugging"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Claude Opus 4.6", "Gemini 3.1 Pro"]
+    review_strategy: "cross_model_independent"
+    review_model: "Gemini 3.1 Pro"
+    default_risk: "high"
+
+  nlp:
+    primary_dimensions: ["ai_ml_reasoning", "coding", "long_context_analysis", "testing"]
+    primary_model: "Gemini 3.1 Pro"
+    fallbacks: ["Claude Sonnet 4.6", "Gemini 3.6 Flash"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "medium"
+
+  llm:
+    primary_dimensions: ["reasoning", "ai_ml_reasoning", "coding", "long_context_analysis"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Gemini 3.1 Pro", "Claude Opus 4.6"]
+    review_strategy: "cross_model_independent"
+    review_model: "Gemini 3.1 Pro"
+    default_risk: "high"
+
+  computer_vision:
+    primary_dimensions: ["ai_ml_reasoning", "coding", "debugging", "testing"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Gemini 3.1 Pro", "Gemini 3.6 Flash"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "medium"
+
+  devops:
+    primary_dimensions: ["coding", "architecture", "debugging", "reasoning"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Gemini 3.1 Pro", "Gemini 3.6 Flash"]
+    review_strategy: "cross_model_independent"
+    review_model: "Claude Opus 4.6"
+    default_risk: "high"
+
+  security:
+    primary_dimensions: ["reasoning", "code_review", "architecture", "debugging"]
+    primary_model: "Claude Opus 4.6"
+    fallbacks: ["Gemini 3.1 Pro", "Claude Sonnet 4.6"]
+    review_strategy: "cross_model_independent"
+    review_model: "Gemini 3.1 Pro"
+    default_risk: "critical"
+
+  testing:
+    primary_dimensions: ["testing", "coding", "debugging", "autonomous_execution"]
+    primary_model: "Gemini 3.6 Flash"
+    fallbacks: ["Claude Sonnet 4.6", "GPT-OSS-120B"]
+    review_strategy: "automated_gate_only"
+    default_risk: "low"
+
+  research:
+    primary_dimensions: ["research", "reasoning", "mathematical_reasoning", "long_context_analysis"]
+    primary_model: "Gemini 3.1 Pro"
+    fallbacks: ["Claude Opus 4.6", "Gemini 3.6 Flash"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "low"
+
+  ui_ux:
+    primary_dimensions: ["ui_ux_reasoning", "planning", "research", "reasoning"]
+    primary_model: "Gemini 3.6 Flash"
+    fallbacks: ["Claude Sonnet 4.6", "Gemini 3.1 Pro"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "medium"
+
+  documentation:
+    primary_dimensions: ["documentation", "long_context_analysis", "planning"]
+    primary_model: "Gemini 3.6 Flash"
+    fallbacks: ["Gemini 3.5 Flash", "Gemini 3.1 Pro"]
+    review_strategy: "none"
+    default_risk: "low"
+
+  review:
+    primary_dimensions: ["code_review", "debugging", "reasoning", "architecture"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Claude Opus 4.6", "Gemini 3.1 Pro"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "high"
+
+  debugging:
+    primary_dimensions: ["debugging", "coding", "reasoning", "code_review"]
+    primary_model: "Claude Sonnet 4.6"
+    fallbacks: ["Claude Opus 4.6", "Gemini 3.6 Flash"]
+    review_strategy: "same_model_fresh_context"
+    default_risk: "medium"

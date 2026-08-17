@@ -1,0 +1,316 @@
+# Orca Agent Hierarchy Specification
+# Defines organizational tiers, domain clusters, escalation chains, and dynamic activation logic for all 29 agents.
+
+version: "1.0.0"
+system: "Orca Agent Operating System"
+total_agents: 29
+
+tiers:
+  tier_0_discovery:
+    description: "Meta-analysis, project capability extraction, and squad formulation"
+    agents:
+      - "requirement-analyzer"
+
+  tier_1_governance_leads:
+    description: "Senior decision makers owning architectural, quality, security, brand, operational, and product authority"
+    agents:
+      - "senior-system-architect"
+      - "senior-product-manager"
+      - "senior-security-engineer"
+      - "senior-qa-architect"
+      - "brand-guardian"
+      - "senior-devops-engineer"
+      - "senior-performance-engineer"
+      - "senior-ai-engineer"
+      - "senior-cloud-architect"
+      - "senior-database-architect"
+      - "senior-product-designer"
+
+  tier_2_specialists_and_engineers:
+    description: "Domain specialists and construction engineers executing within defined architectural and design contracts"
+    agents:
+      - "senior-system-designer"
+      - "senior-backend-engineer"
+      - "senior-frontend-engineer"
+      - "ui-designer"
+      - "senior-llm-engineer"
+      - "senior-nlp-engineer"
+      - "senior-machine-learning-engineer"
+      - "senior-deep-learning-engineer"
+      - "senior-generative-ai-engineer"
+      - "senior-computer-vision-engineer"
+      - "senior-mlops-engineer"
+      - "senior-data-engineer"
+
+  tier_3_research_and_audit:
+    description: "Specialized research, UX modeling, empirical prototyping, and visual inspection support roles"
+    agents:
+      - "senior-ai-research-engineer"
+      - "ux-researcher"
+      - "design-researcher"
+      - "pinterest-researcher"
+      - "visual-qa"
+
+domains:
+  system_architecture:
+    lead: "senior-system-architect"
+    members:
+      - "senior-system-architect"
+      - "senior-system-designer"
+      - "senior-cloud-architect"
+      - "senior-database-architect"
+
+  product_and_growth:
+    lead: "senior-product-manager"
+    members:
+      - "requirement-analyzer"
+      - "senior-product-manager"
+      - "ux-researcher"
+
+  visual_and_brand_design:
+    lead: "brand-guardian"
+    members:
+      - "brand-guardian"
+      - "senior-product-designer"
+      - "ui-designer"
+      - "design-researcher"
+      - "pinterest-researcher"
+
+  core_engineering:
+    lead: "senior-system-architect"
+    members:
+      - "senior-frontend-engineer"
+      - "senior-backend-engineer"
+      - "senior-database-architect"
+      - "senior-data-engineer"
+
+  artificial_intelligence_and_data:
+    lead: "senior-ai-engineer"
+    members:
+      - "senior-ai-engineer"
+      - "senior-ai-research-engineer"
+      - "senior-llm-engineer"
+      - "senior-nlp-engineer"
+      - "senior-machine-learning-engineer"
+      - "senior-deep-learning-engineer"
+      - "senior-generative-ai-engineer"
+      - "senior-computer-vision-engineer"
+      - "senior-mlops-engineer"
+      - "senior-data-engineer"
+
+  quality_security_performance:
+    lead: "senior-qa-architect"
+    members:
+      - "senior-qa-architect"
+      - "senior-security-engineer"
+      - "senior-performance-engineer"
+      - "visual-qa"
+
+  operations_and_infrastructure:
+    lead: "senior-devops-engineer"
+    members:
+      - "senior-devops-engineer"
+      - "senior-cloud-architect"
+      - "senior-mlops-engineer"
+
+escalation_chains:
+  requirement-analyzer:
+    technical_escalation: "senior-system-architect"
+    product_escalation: "senior-product-manager"
+    security_escalation: "senior-security-engineer"
+
+  senior-product-manager:
+    technical_feasibility: "senior-system-architect"
+    design_feasibility: "senior-product-designer"
+    seo_implementation: "senior-frontend-engineer"
+
+  senior-system-architect:
+    business_tradeoffs: "senior-product-manager"
+    security_veto: "senior-security-engineer"
+    cloud_cost: "senior-cloud-architect"
+
+  senior-system-designer:
+    architectural_changes: "senior-system-architect"
+    data_modeling: "senior-database-architect"
+
+  senior-cloud-architect:
+    architecture_alignment: "senior-system-architect"
+    security_compliance: "senior-security-engineer"
+    iac_deployment: "senior-devops-engineer"
+
+  senior-database-architect:
+    service_topology: "senior-system-architect"
+    infrastructure_provisioning: "senior-devops-engineer"
+    encryption_policies: "senior-security-engineer"
+
+  senior-security-engineer:
+    infrastructure_isolation: "senior-devops-engineer"
+    cloud_policies: "senior-cloud-architect"
+
+  senior-devops-engineer:
+    security_violations: "senior-security-engineer"
+    infrastructure_scope: "senior-system-architect"
+
+  senior-qa-architect:
+    visual_defects: "visual-qa"
+    perf_regressions: "senior-performance-engineer"
+    security_flaws: "senior-security-engineer"
+    frontend_seo: "senior-frontend-engineer"
+
+  senior-performance-engineer:
+    architecture_bottlenecks: "senior-system-architect"
+    database_queries: "senior-database-architect"
+    frontend_rendering: "senior-frontend-engineer"
+
+  senior-frontend-engineer:
+    visual_compliance: "visual-qa"
+    brand_identity: "brand-guardian"
+    api_contracts: "senior-system-designer"
+    seo_strategy: "senior-product-manager"
+    perf_budgets: "senior-performance-engineer"
+
+  senior-backend-engineer:
+    api_contracts: "senior-system-designer"
+    database_optimizations: "senior-database-architect"
+    security_vulnerabilities: "senior-security-engineer"
+    perf_bottlenecks: "senior-performance-engineer"
+
+  senior-product-designer:
+    brand_identity: "brand-guardian"
+    technical_constraints: "senior-frontend-engineer"
+    user_requirements: "senior-product-manager"
+
+  ui-designer:
+    brand_approval: "brand-guardian"
+    design_system: "senior-product-designer"
+    frontend_handoff: "senior-frontend-engineer"
+
+  brand-guardian:
+    design_iterations: "ui-designer"
+    product_alignment: "senior-product-manager"
+
+  visual-qa:
+    brand_violations: "brand-guardian"
+    layout_defects: "senior-frontend-engineer"
+    perf_jank: "senior-performance-engineer"
+
+  ux-researcher:
+    product_scope: "senior-product-manager"
+    wireframe_friction: "senior-product-designer"
+
+  design-researcher:
+    brand_context: "brand-guardian"
+    design_synthesis: "senior-product-designer"
+
+  pinterest-researcher:
+    brand_alignment: "brand-guardian"
+    research_handoff: "design-researcher"
+
+  senior-ai-engineer:
+    research_r_and_d: "senior-ai-research-engineer"
+    serving_infrastructure: "senior-mlops-engineer"
+    system_architecture: "senior-system-architect"
+
+  senior-ai-research-engineer:
+    model_scaling: "senior-deep-learning-engineer"
+    ml_industrialization: "senior-machine-learning-engineer"
+    architectural_tradeoffs: "senior-system-architect"
+
+  senior-machine-learning-engineer:
+    data_pipelines: "senior-data-engineer"
+    model_serving: "senior-mlops-engineer"
+    ai_strategy: "senior-ai-engineer"
+
+  senior-deep-learning-engineer:
+    theoretical_breakthroughs: "senior-ai-research-engineer"
+    cluster_serving: "senior-mlops-engineer"
+    ai_strategy: "senior-ai-engineer"
+
+  senior-nlp-engineer:
+    generative_reasoning: "senior-llm-engineer"
+    vector_persistence: "senior-database-architect"
+    ai_strategy: "senior-ai-engineer"
+
+  senior-llm-engineer:
+    serving_infrastructure: "senior-mlops-engineer"
+    security_guardrails: "senior-security-engineer"
+    ai_strategy: "senior-ai-engineer"
+
+  senior-generative-ai-engineer:
+    brand_fidelity: "brand-guardian"
+    serving_infrastructure: "senior-mlops-engineer"
+    ai_strategy: "senior-ai-engineer"
+
+  senior-computer-vision-engineer:
+    serving_infrastructure: "senior-mlops-engineer"
+    visual_validation: "visual-qa"
+    ai_strategy: "senior-ai-engineer"
+
+  senior-mlops-engineer:
+    cloud_networking: "senior-devops-engineer"
+    model_distribution_drift: "senior-machine-learning-engineer"
+    ai_architecture: "senior-ai-engineer"
+
+  senior-data-engineer:
+    oltp_persistence: "senior-database-architect"
+    pii_security: "senior-security-engineer"
+    infra_provisioning: "senior-devops-engineer"
+
+dynamic_activation_rules:
+  always_activated:
+    - "requirement-analyzer"
+    - "senior-system-architect"
+    - "senior-security-engineer"
+    - "senior-qa-architect"
+
+  ui_web_project:
+    condition: "Project involves user-facing web, mobile, or dashboard interface"
+    activates:
+      - "senior-product-manager"
+      - "pinterest-researcher"
+      - "design-researcher"
+      - "ux-researcher"
+      - "senior-product-designer"
+      - "ui-designer"
+      - "brand-guardian"
+      - "senior-frontend-engineer"
+      - "visual-qa"
+      - "senior-performance-engineer"
+
+  api_backend_project:
+    condition: "Project involves server APIs, database storage, background workers, or authentication"
+    activates:
+      - "senior-system-designer"
+      - "senior-backend-engineer"
+      - "senior-database-architect"
+      - "senior-devops-engineer"
+
+  ai_llm_project:
+    condition: "Project involves LLM reasoning, RAG pipelines, prompt engineering, or AI agents"
+    activates:
+      - "senior-ai-engineer"
+      - "senior-llm-engineer"
+      - "senior-nlp-engineer"
+      - "senior-mlops-engineer"
+
+  classical_ml_data_project:
+    condition: "Project involves tabular predictive modeling, forecasting, or large-scale data pipelines"
+    activates:
+      - "senior-machine-learning-engineer"
+      - "senior-data-engineer"
+      - "senior-mlops-engineer"
+
+  deep_learning_vision_generative_project:
+    condition: "Project involves computer vision, neural image/audio generation, or novel model R&D"
+    activates:
+      - "senior-deep-learning-engineer"
+      - "senior-computer-vision-engineer"
+      - "senior-generative-ai-engineer"
+      - "senior-ai-research-engineer"
+      - "senior-mlops-engineer"
+
+  cloud_platform_project:
+    condition: "Project requires multi-cloud landing zones, FinOps cost modeling, or complex distributed topologies"
+    activates:
+      - "senior-cloud-architect"
+      - "senior-devops-engineer"

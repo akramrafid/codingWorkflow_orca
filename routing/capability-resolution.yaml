@@ -1,0 +1,433 @@
+# Orca Capability Resolution Ontology
+# Defines the bidirectional mapping between extracted project capabilities, agent activation, implied sub-capabilities, and mandatory gates.
+
+version: "1.0.0"
+system: "Orca Agent Operating System"
+
+capabilities:
+  # -------------------------------------------------------------
+  # ARCHITECTURE & SYSTEM GOVERNANCE
+  # -------------------------------------------------------------
+  system_architecture_design:
+    description: "High-level system topology, bounded contexts, ADR authoring, and rendering strategies"
+    primary_agent: "senior-system-architect"
+    supporting_agents:
+      - "senior-system-designer"
+    implied_capabilities:
+      - "security_threat_modeling"
+      - "quality_assurance_strategy"
+    mandatory_gates:
+      - "architecture_gate"
+    worktree: "main"
+
+  detailed_interface_design:
+    description: "Granular OpenAPI 3.1, GraphQL schemas, gRPC protobufs, sequence flows, and component contracts"
+    primary_agent: "senior-system-designer"
+    supporting_agents:
+      - "senior-backend-engineer"
+      - "senior-frontend-engineer"
+    implied_capabilities:
+      - "system_architecture_design"
+    mandatory_gates:
+      - "architecture_gate"
+    worktree: "main"
+
+  relational_data_modeling:
+    description: "Entity relationship modeling, PostgreSQL/MySQL schema design, and zero-downtime migrations"
+    primary_agent: "senior-database-architect"
+    supporting_agents:
+      - "senior-backend-engineer"
+    implied_capabilities:
+      - "database_migration_verification"
+      - "data_security_encryption"
+    mandatory_gates:
+      - "architecture_gate"
+      - "security_gate"
+    worktree: "worktree/backend"
+
+  cloud_landing_zone_finops:
+    description: "Multi-cloud topologies, VPC networking, FinOps cost projections, and disaster recovery zones"
+    primary_agent: "senior-cloud-architect"
+    supporting_agents:
+      - "senior-devops-engineer"
+    implied_capabilities:
+      - "infrastructure_as_code"
+      - "security_threat_modeling"
+    mandatory_gates:
+      - "architecture_gate"
+      - "security_gate"
+    worktree: "worktree/devops"
+
+  # -------------------------------------------------------------
+  # PRODUCT STRATEGY, SEO & CONVERSION
+  # -------------------------------------------------------------
+  product_requirements_prd:
+    description: "Product requirement authoring, user personas, given-when-then acceptance criteria, and roadmaps"
+    primary_agent: "senior-product-manager"
+    supporting_agents:
+      - "requirement-analyzer"
+      - "ux-researcher"
+    implied_capabilities: []
+    mandatory_gates: []
+    worktree: "main"
+
+  seo_strategy_and_content:
+    description: "Keyword taxonomy, structured data planning (JSON-LD), URL slug hierarchy, and sitemap design"
+    primary_agent: "senior-product-manager"
+    supporting_agents:
+      - "senior-frontend-engineer"
+    implied_capabilities:
+      - "ssr_ssg_rendering"
+      - "seo_automated_testing"
+    mandatory_gates:
+      - "qa_gate"
+    worktree: "worktree/frontend"
+
+  conversion_funnel_optimization:
+    description: "CTA dominance, trust signal placement, onboarding flow friction reduction, and social proof"
+    primary_agent: "senior-product-manager"
+    supporting_agents:
+      - "senior-product-designer"
+      - "ui-designer"
+      - "senior-frontend-engineer"
+    implied_capabilities:
+      - "high_fidelity_ui_design"
+    mandatory_gates:
+      - "brand_gate"
+    worktree: "worktree/frontend"
+
+  # -------------------------------------------------------------
+  # DESIGN PIPELINE & BRAND IDENTITY
+  # -------------------------------------------------------------
+  visual_brand_identity:
+    description: "Color token palettes (HSL), typography scales, aesthetic quality enforcement, and token locking"
+    primary_agent: "brand-guardian"
+    supporting_agents:
+      - "senior-product-designer"
+      - "ui-designer"
+    implied_capabilities:
+      - "visual_accessibility_wcag"
+    mandatory_gates:
+      - "brand_gate"
+    worktree: "main"
+
+  visual_inspiration_moodboards:
+    description: "Aesthetic trend discovery, moodboards, color palette extraction, and texture treatments"
+    primary_agent: "pinterest-researcher"
+    supporting_agents:
+      - "design-researcher"
+    implied_capabilities: []
+    mandatory_gates: []
+    worktree: "main"
+
+  competitor_ui_benchmarking:
+    description: "Competitor UI analysis, interaction pattern extraction, and design ergonomics"
+    primary_agent: "design-researcher"
+    supporting_agents:
+      - "senior-product-designer"
+    implied_capabilities: []
+    mandatory_gates: []
+    worktree: "main"
+
+  ux_journey_mapping_personas:
+    description: "User persona archetypes, user journey mapping, and cognitive walkthrough friction analysis"
+    primary_agent: "ux-researcher"
+    supporting_agents:
+      - "senior-product-manager"
+      - "senior-product-designer"
+    implied_capabilities: []
+    mandatory_gates: []
+    worktree: "main"
+
+  wireframing_design_systems:
+    description: "Information architecture, wireframes, interaction specs, and component hierarchy"
+    primary_agent: "senior-product-designer"
+    supporting_agents:
+      - "ui-designer"
+    implied_capabilities:
+      - "visual_brand_identity"
+    mandatory_gates:
+      - "brand_gate"
+    worktree: "main"
+
+  high_fidelity_ui_design:
+    description: "High-fidelity visual specifications, CSS tokens, micro-interactions, and component state matrices"
+    primary_agent: "ui-designer"
+    supporting_agents:
+      - "senior-product-designer"
+      - "brand-guardian"
+    implied_capabilities:
+      - "visual_brand_identity"
+      - "visual_qa_audit"
+    mandatory_gates:
+      - "brand_gate"
+    worktree: "main"
+
+  visual_qa_audit:
+    description: "Multi-viewport screenshot auditing (375px/768px/1280px/1920px), visual diffs, and dark mode validation"
+    primary_agent: "visual-qa"
+    supporting_agents:
+      - "brand-guardian"
+      - "senior-frontend-engineer"
+    implied_capabilities: []
+    mandatory_gates:
+      - "visual_gate"
+    worktree: "main"
+
+  # -------------------------------------------------------------
+  # FRONTEND & BACKEND ENGINEERING
+  # -------------------------------------------------------------
+  ssr_ssg_frontend_engineering:
+    description: "Production web applications, Next.js/React SSR/SSG rendering, Core Web Vitals, and SEO tags"
+    primary_agent: "senior-frontend-engineer"
+    supporting_agents:
+      - "ui-designer"
+      - "visual-qa"
+    implied_capabilities:
+      - "visual_brand_identity"
+      - "core_web_vitals_optimization"
+      - "automated_testing_qa"
+    mandatory_gates:
+      - "brand_gate"
+      - "qa_gate"
+      - "performance_gate"
+      - "visual_gate"
+    worktree: "worktree/frontend"
+
+  api_backend_engineering:
+    description: "High-performance REST/GraphQL/gRPC APIs, service layers, middleware pipelines, and queue workers"
+    primary_agent: "senior-backend-engineer"
+    supporting_agents:
+      - "senior-database-architect"
+      - "senior-system-designer"
+    implied_capabilities:
+      - "authentication_rbac_security"
+      - "automated_testing_qa"
+      - "backend_latency_budgeting"
+    mandatory_gates:
+      - "architecture_gate"
+      - "security_gate"
+      - "qa_gate"
+      - "performance_gate"
+    worktree: "worktree/backend"
+
+  streaming_etl_data_engineering:
+    description: "Distributed ETL/ELT pipelines, Kafka/Spark/Flink streams, lakehouse modeling, and dbt DAGs"
+    primary_agent: "senior-data-engineer"
+    supporting_agents:
+      - "senior-database-architect"
+    implied_capabilities:
+      - "data_security_encryption"
+      - "automated_testing_qa"
+    mandatory_gates:
+      - "architecture_gate"
+      - "qa_gate"
+    worktree: "worktree/data"
+
+  # -------------------------------------------------------------
+  # ARTIFICIAL INTELLIGENCE & MACHINE LEARNING
+  # -------------------------------------------------------------
+  ai_systems_orchestration:
+    description: "Multi-agent coordination architectures, neuro-symbolic reasoning, and AI safety guardrails"
+    primary_agent: "senior-ai-engineer"
+    supporting_agents:
+      - "senior-llm-engineer"
+      - "senior-mlops-engineer"
+    implied_capabilities:
+      - "ai_evaluation_benchmarking"
+      - "security_threat_modeling"
+    mandatory_gates:
+      - "architecture_gate"
+      - "qa_gate"
+    worktree: "worktree/ai"
+
+  ai_research_novel_algorithms:
+    description: "Literature synthesis, mathematical formulations, paper reproductions, and empirical ablation studies"
+    primary_agent: "senior-ai-research-engineer"
+    supporting_agents:
+      - "senior-ai-engineer"
+    implied_capabilities: []
+    mandatory_gates:
+      - "architecture_gate"
+    worktree: "worktree/ai"
+
+  llm_rag_and_agents:
+    description: "Production RAG pipelines, prompt template registries, tool-calling schemas, and PEFT/LoRA fine-tuning"
+    primary_agent: "senior-llm-engineer"
+    supporting_agents:
+      - "senior-nlp-engineer"
+      - "senior-database-architect"
+      - "senior-mlops-engineer"
+    implied_capabilities:
+      - "nlp_text_embeddings_retrieval"
+      - "vector_database_indexing"
+      - "ai_evaluation_benchmarking"
+      - "api_backend_engineering"
+    mandatory_gates:
+      - "architecture_gate"
+      - "security_gate"
+      - "qa_gate"
+    worktree: "worktree/ai"
+
+  nlp_text_embeddings_retrieval:
+    description: "Text preprocessing, tokenizers, dense/sparse embeddings (BGE/ColBERT), and semantic search ranking"
+    primary_agent: "senior-nlp-engineer"
+    supporting_agents:
+      - "senior-database-architect"
+    implied_capabilities:
+      - "automated_testing_qa"
+    mandatory_gates:
+      - "qa_gate"
+    worktree: "worktree/ai"
+
+  vector_database_indexing:
+    description: "pgvector, Qdrant, Pinecone schema design, HNSW/IVFFlat index tuning, and hybrid search queries"
+    primary_agent: "senior-database-architect"
+    supporting_agents:
+      - "senior-nlp-engineer"
+    implied_capabilities:
+      - "relational_data_modeling"
+    mandatory_gates:
+      - "architecture_gate"
+    worktree: "worktree/backend"
+
+  classical_machine_learning:
+    description: "Tabular models (XGBoost/LightGBM), feature store transforms, cross-validation, and offline SHAP metrics"
+    primary_agent: "senior-machine-learning-engineer"
+    supporting_agents:
+      - "senior-data-engineer"
+      - "senior-mlops-engineer"
+    implied_capabilities:
+      - "streaming_etl_data_engineering"
+      - "automated_testing_qa"
+    mandatory_gates:
+      - "qa_gate"
+    worktree: "worktree/ai"
+
+  deep_learning_neural_networks:
+    description: "Neural architectures (Transformers/CNNs), distributed GPU training (DDP/FSDP), and quantization"
+    primary_agent: "senior-deep-learning-engineer"
+    supporting_agents:
+      - "senior-ai-research-engineer"
+      - "senior-mlops-engineer"
+    implied_capabilities:
+      - "ai_evaluation_benchmarking"
+    mandatory_gates:
+      - "qa_gate"
+    worktree: "worktree/ai"
+
+  generative_media_synthesis:
+    description: "Diffusion models (SDXL/FLUX), ControlNet adapters, audio/voice synthesis, and prompt engineering"
+    primary_agent: "senior-generative-ai-engineer"
+    supporting_agents:
+      - "brand-guardian"
+      - "senior-mlops-engineer"
+    implied_capabilities:
+      - "visual_brand_identity"
+      - "ai_evaluation_benchmarking"
+    mandatory_gates:
+      - "brand_gate"
+      - "qa_gate"
+    worktree: "worktree/ai"
+
+  computer_vision_analytics:
+    description: "Object detection (YOLO), segmentation (SAM), OCR pipelines, video stream analytics, and TensorRT"
+    primary_agent: "senior-computer-vision-engineer"
+    supporting_agents:
+      - "senior-deep-learning-engineer"
+      - "senior-mlops-engineer"
+    implied_capabilities:
+      - "automated_testing_qa"
+    mandatory_gates:
+      - "qa_gate"
+    worktree: "worktree/ai"
+
+  mlops_model_serving_drift:
+    description: "Inference clusters (vLLM/Triton), model registries (MLflow), CT/CD pipelines, and drift alerts"
+    primary_agent: "senior-mlops-engineer"
+    supporting_agents:
+      - "senior-devops-engineer"
+    implied_capabilities:
+      - "infrastructure_as_code"
+      - "backend_latency_budgeting"
+    mandatory_gates:
+      - "qa_gate"
+      - "performance_gate"
+    worktree: "worktree/ai"
+
+  # -------------------------------------------------------------
+  # QUALITY, SECURITY, PERFORMANCE & DEVOPS
+  # -------------------------------------------------------------
+  automated_testing_qa:
+    description: "Master test planning, unit/integration/E2E test suites, coverage threshold enforcement (≥80%)"
+    primary_agent: "senior-qa-architect"
+    supporting_agents:
+      - "visual-qa"
+      - "senior-performance-engineer"
+    implied_capabilities: []
+    mandatory_gates:
+      - "qa_gate"
+    worktree: "main"
+
+  core_web_vitals_optimization:
+    description: "Lighthouse CI enforcement (Perf ≥90, SEO ≥95), LCP/INP/CLS budgets, and bundle analysis"
+    primary_agent: "senior-performance-engineer"
+    supporting_agents:
+      - "senior-frontend-engineer"
+    implied_capabilities: []
+    mandatory_gates:
+      - "performance_gate"
+    worktree: "worktree/frontend"
+
+  backend_latency_budgeting:
+    description: "k6/Locust load testing, API p95 < 200ms latency budgets, and query execution plan optimization"
+    primary_agent: "senior-performance-engineer"
+    supporting_agents:
+      - "senior-backend-engineer"
+      - "senior-database-architect"
+    implied_capabilities: []
+    mandatory_gates:
+      - "performance_gate"
+    worktree: "worktree/backend"
+
+  authentication_rbac_security:
+    description: "OAuth2/OIDC, JWT RS256, RBAC/ABAC authorization, rate limiting, CORS/CSRF, and input validation"
+    primary_agent: "senior-security-engineer"
+    supporting_agents:
+      - "senior-backend-engineer"
+    implied_capabilities:
+      - "security_threat_modeling"
+    mandatory_gates:
+      - "security_gate"
+    worktree: "worktree/backend"
+
+  security_threat_modeling:
+    description: "STRIDE threat modeling, SAST/DAST vulnerability scanning (0 critical/high CVEs), secret audits"
+    primary_agent: "senior-security-engineer"
+    supporting_agents:
+      - "senior-devops-engineer"
+    implied_capabilities: []
+    mandatory_gates:
+      - "security_gate"
+    worktree: "main"
+
+  data_security_encryption:
+    description: "AES-256-GCM encryption at rest, TLS 1.3 in transit, PII masking, and key rotation policies"
+    primary_agent: "senior-security-engineer"
+    supporting_agents:
+      - "senior-database-architect"
+    implied_capabilities: []
+    mandatory_gates:
+      - "security_gate"
+    worktree: "worktree/backend"
+
+  infrastructure_as_code:
+    description: "Terraform/Pulumi IaC, multi-stage Dockerfiles, CI/CD automation, and zero-downtime Canary deploys"
+    primary_agent: "senior-devops-engineer"
+    supporting_agents:
+      - "senior-cloud-architect"
+    implied_capabilities:
+      - "security_threat_modeling"
+    mandatory_gates:
+      - "release_gate"
+    worktree: "worktree/devops"

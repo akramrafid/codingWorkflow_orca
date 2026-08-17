@@ -1,0 +1,46 @@
+# Orca Execution Harness Registry
+# Declarative registry defining active and pluggable execution runtime harnesses.
+
+version: "1.0.0"
+system: "Orca Agent Operating System"
+default_harness: "antigravity-cli"
+
+harnesses:
+  antigravity-cli:
+    harness_id: "antigravity-cli"
+    display_name: "Google Antigravity CLI"
+    type: "cli"
+    platform: "windows"
+    status: "active"
+    description: "Primary execution harness running on Windows PowerShell and Google AI Pro infrastructure."
+    capabilities:
+      - "custom_agents"
+      - "subagents"
+      - "parallel_tasks"
+      - "model_selection"
+      - "project_sessions"
+      - "permissions"
+      - "mcp"
+      - "background_tasks"
+    supported_models:
+      - "Gemini 3.6 Flash"
+      - "Gemini 3.5 Flash"
+      - "Gemini 3.1 Pro"
+      - "Claude Sonnet 4.6"
+      - "Claude Opus 4.6"
+      - "GPT-OSS-120B"
+    slash_commands:
+      - "/agents"
+      - "/model"
+      - "/permissions"
+      - "/tasks"
+      - "/mcp"
+      - "/usage"
+      - "/plan"
+      - "/grill-me"
+      - "/learn"
+    configuration:
+      runner_script: "harness/antigravity-runner.ps1"
+      default_mode: "dry-run"
+      safety_enforced: true
+      require_human_approval_for_high_risk: true

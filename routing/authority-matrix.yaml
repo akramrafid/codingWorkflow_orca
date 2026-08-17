@@ -1,0 +1,591 @@
+# Orca Authority Matrix
+# Comprehensive governance specification for permissions, delegations, approvals, veto powers, and review gates across all 29 agents.
+
+version: "1.0.0"
+system: "Orca Agent Operating System"
+total_agents: 29
+
+agents:
+  requirement-analyzer:
+    role_type: "research_design_support"
+    can_modify_production_code: false
+    can_delegate_to: []
+    escalates_to:
+      - "senior-system-architect"
+      - "senior-product-manager"
+      - "senior-security-engineer"
+    approval_authority:
+      - "Capability mapping and squad activation recommendations"
+    rejection_veto_authority:
+      - "Incomplete or ambiguous project prompts"
+    required_reviews:
+      - "architecture"
+
+  senior-product-manager:
+    role_type: "decision_maker"
+    can_modify_production_code: false
+    can_delegate_to:
+      - "ux-researcher"
+      - "senior-product-designer"
+      - "senior-frontend-engineer"
+    escalates_to:
+      - "senior-system-architect"
+    approval_authority:
+      - "Product Requirement Documents (PRDs)"
+      - "SEO and Conversion Specifications"
+      - "User story acceptance criteria sign-offs"
+      - "Scope boundary definitions"
+    rejection_veto_authority:
+      - "Feature implementations that fail acceptance criteria"
+      - "Pages lacking SEO metadata or conversion elements"
+    required_reviews: []
+
+  senior-system-architect:
+    role_type: "decision_maker"
+    can_modify_production_code: false
+    can_delegate_to:
+      - "senior-system-designer"
+      - "senior-database-architect"
+      - "senior-cloud-architect"
+      - "senior-backend-engineer"
+      - "senior-frontend-engineer"
+      - "senior-ai-engineer"
+    escalates_to:
+      - "senior-product-manager"
+    approval_authority:
+      - "Architecture Decision Records (ADRs)"
+      - "System blueprints and service topologies"
+      - "Rendering strategies (SSR/SSG/ISR/CSR)"
+      - "Caching and CDN topology"
+      - "Cross-domain technical proposals"
+    rejection_veto_authority:
+      - "Unjustified architectural complexity (e.g. unneeded microservices/K8s)"
+      - "Changes violating established ADRs or performance response budgets"
+    required_reviews: []
+
+  senior-system-designer:
+    role_type: "specialist"
+    can_modify_production_code: false
+    can_delegate_to:
+      - "senior-backend-engineer"
+      - "senior-frontend-engineer"
+    escalates_to:
+      - "senior-system-architect"
+      - "senior-database-architect"
+    approval_authority:
+      - "Granular component specifications"
+      - "OpenAPI 3.1, GraphQL, and gRPC interface contracts"
+      - "State machine and sequence definitions"
+    rejection_veto_authority:
+      - "API implementations deviating from approved contracts"
+    required_reviews:
+      - "architecture"
+
+  senior-cloud-architect:
+    role_type: "decision_maker"
+    can_modify_production_code: false
+    can_delegate_to:
+      - "senior-devops-engineer"
+    escalates_to:
+      - "senior-system-architect"
+      - "senior-security-engineer"
+    approval_authority:
+      - "Multi-cloud and hybrid landing zone architectures"
+      - "FinOps cost models and resource sizing"
+      - "Disaster recovery and multi-region topologies"
+    rejection_veto_authority:
+      - "Unbudgeted or unoptimized cloud infrastructure footprints"
+    required_reviews:
+      - "architecture"
+      - "security"
+
+  senior-database-architect:
+    role_type: "decision_maker"
+    can_modify_production_code: true
+    can_delegate_to:
+      - "senior-backend-engineer"
+      - "senior-data-engineer"
+    escalates_to:
+      - "senior-system-architect"
+      - "senior-security-engineer"
+    approval_authority:
+      - "Database schemas and ERDs"
+      - "Migration and rollback scripts"
+      - "Vector and relational index configurations"
+    rejection_veto_authority:
+      - "Destructive or locking database migrations"
+      - "Unindexed queries causing full table scans"
+    required_reviews:
+      - "architecture"
+      - "security"
+      - "qa"
+
+  senior-security-engineer:
+    role_type: "decision_maker"
+    can_modify_production_code: true
+    can_delegate_to:
+      - "senior-backend-engineer"
+      - "senior-devops-engineer"
+    escalates_to:
+      - "senior-system-architect"
+    approval_authority:
+      - "Threat models (STRIDE) and security architecture"
+      - "Authentication, authorization, and cryptographic protocols"
+      - "Security clearance for production releases"
+    rejection_veto_authority:
+      - "Unilateral veto over any release with critical/high CVEs or auth flaws"
+      - "Insecure secret management or exposed credentials"
+    required_reviews: []
+
+  senior-devops-engineer:
+    role_type: "decision_maker"
+    can_modify_production_code: true
+    can_delegate_to:
+      - "senior-cloud-architect"
+      - "senior-mlops-engineer"
+    escalates_to:
+      - "senior-system-architect"
+      - "senior-security-engineer"
+    approval_authority:
+      - "CI/CD pipelines and deployment manifests"
+      - "Container configurations and Dockerfiles"
+      - "Observability, logging, and metrics setup"
+    rejection_veto_authority:
+      - "Unapproved or unsafe production deployments"
+      - "Broken CI pipelines or unhardened container images"
+    required_reviews:
+      - "security"
+      - "architecture"
+
+  senior-qa-architect:
+    role_type: "decision_maker"
+    can_modify_production_code: true
+    can_delegate_to:
+      - "visual-qa"
+      - "senior-performance-engineer"
+    escalates_to:
+      - "senior-system-architect"
+    approval_authority:
+      - "Master Test Plans and coverage thresholds"
+      - "Quality gate sign-offs for PR merge"
+      - "Automated test suites (unit, integration, E2E)"
+    rejection_veto_authority:
+      - "Veto over PR merges when tests fail or coverage is < 80%"
+      - "Rejection of broken user journeys or unhandled edge cases"
+    required_reviews: []
+
+  senior-performance-engineer:
+    role_type: "decision_maker"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-system-architect"
+      - "senior-frontend-engineer"
+      - "senior-database-architect"
+    approval_authority:
+      - "Performance budgets and Core Web Vitals targets"
+      - "Lighthouse CI configuration and assertions"
+      - "Load testing benchmarks and latency SLAs"
+    rejection_veto_authority:
+      - "Veto over releases failing Lighthouse (Perf < 90, SEO < 95) or p95 > 200ms"
+      - "Over-budget bundles (> 200KB gzipped initial)"
+    required_reviews:
+      - "qa"
+
+  senior-frontend-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "brand-guardian"
+      - "visual-qa"
+      - "senior-system-designer"
+      - "senior-product-manager"
+      - "senior-performance-engineer"
+    approval_authority:
+      - "Frontend component modularity and internal state management"
+    rejection_veto_authority:
+      - "Incomplete API schemas from backend preventing UI consumption"
+    required_reviews:
+      - "brand"
+      - "qa"
+      - "performance"
+      - "security"
+
+  senior-backend-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-system-designer"
+      - "senior-database-architect"
+      - "senior-security-engineer"
+      - "senior-performance-engineer"
+    approval_authority:
+      - "Backend service implementations and middleware pipelines"
+    rejection_veto_authority: []
+    required_reviews:
+      - "architecture"
+      - "security"
+      - "qa"
+      - "performance"
+
+  senior-product-designer:
+    role_type: "decision_maker"
+    can_modify_production_code: false
+    can_delegate_to:
+      - "ui-designer"
+      - "ux-researcher"
+      - "design-researcher"
+    escalates_to:
+      - "brand-guardian"
+      - "senior-product-manager"
+      - "senior-frontend-engineer"
+    approval_authority:
+      - "Information architecture and navigation structures"
+      - "Wireframes and interactive user flows"
+      - "Design system component taxonomy"
+    rejection_veto_authority:
+      - "Inconsistent layout structures and confusing interaction flows"
+    required_reviews:
+      - "brand"
+
+  ui-designer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "brand-guardian"
+      - "senior-product-designer"
+      - "senior-frontend-engineer"
+    approval_authority:
+      - "High-fidelity visual specifications and micro-animations"
+      - "CSS design tokens (colors, shadows, typography scale)"
+    rejection_veto_authority: []
+    required_reviews:
+      - "brand"
+
+  brand-guardian:
+    role_type: "decision_maker"
+    can_modify_production_code: false
+    can_delegate_to:
+      - "ui-designer"
+      - "senior-product-designer"
+    escalates_to:
+      - "senior-product-manager"
+    approval_authority:
+      - "Brand guidelines and design token locking"
+      - "Visual design gate sign-off (APPROVE / REJECT / REVISE)"
+      - "Aesthetic and conversion-readiness grading"
+    rejection_veto_authority:
+      - "Unconditional veto over generic, plagiarized, or low-quality UI designs"
+      - "Veto over frontend implementations violating locked design tokens"
+    required_reviews: []
+
+  visual-qa:
+    role_type: "research_design_support"
+    can_modify_production_code: false
+    can_delegate_to: []
+    escalates_to:
+      - "brand-guardian"
+      - "senior-frontend-engineer"
+      - "senior-performance-engineer"
+    approval_authority:
+      - "Visual regression certification"
+      - "Responsive viewport audit sign-off (375px, 768px, 1280px, 1920px)"
+      - "Dark mode visual compliance"
+    rejection_veto_authority:
+      - "Rejection of UI releases with visual defects, clipping, or contrast failures"
+    required_reviews:
+      - "qa"
+
+  ux-researcher:
+    role_type: "research_design_support"
+    can_modify_production_code: false
+    can_delegate_to: []
+    escalates_to:
+      - "senior-product-manager"
+      - "senior-product-designer"
+    approval_authority:
+      - "User personas and empathy maps"
+      - "User journey maps and cognitive walkthrough reports"
+    rejection_veto_authority:
+      - "High-friction user workflows exceeding cognitive load limits"
+    required_reviews: []
+
+  design-researcher:
+    role_type: "research_design_support"
+    can_modify_production_code: false
+    can_delegate_to: []
+    escalates_to:
+      - "brand-guardian"
+      - "senior-product-designer"
+    approval_authority:
+      - "Competitor UI benchmark reports"
+      - "Interaction pattern catalogs"
+    rejection_veto_authority: []
+    required_reviews: []
+
+  pinterest-researcher:
+    role_type: "research_design_support"
+    can_modify_production_code: false
+    can_delegate_to: []
+    escalates_to:
+      - "brand-guardian"
+      - "design-researcher"
+    approval_authority:
+      - "Visual moodboards and aesthetic trend reports"
+    rejection_veto_authority: []
+    required_reviews: []
+
+  senior-ai-engineer:
+    role_type: "decision_maker"
+    can_modify_production_code: true
+    can_delegate_to:
+      - "senior-llm-engineer"
+      - "senior-nlp-engineer"
+      - "senior-machine-learning-engineer"
+      - "senior-deep-learning-engineer"
+      - "senior-generative-ai-engineer"
+      - "senior-computer-vision-engineer"
+      - "senior-ai-research-engineer"
+      - "senior-mlops-engineer"
+    escalates_to:
+      - "senior-system-architect"
+      - "senior-security-engineer"
+    approval_authority:
+      - "AI architecture blueprints and multi-agent coordination"
+      - "AI evaluation benchmarks and hallucination guardrails"
+      - "Model selection and cost/latency matrices"
+    rejection_veto_authority:
+      - "AI pipelines failing accuracy, faithfulness, or safety benchmarks"
+    required_reviews:
+      - "architecture"
+      - "security"
+      - "qa"
+
+  senior-ai-research-engineer:
+    role_type: "research_design_support"
+    can_modify_production_code: false
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "senior-deep-learning-engineer"
+      - "senior-machine-learning-engineer"
+    approval_authority:
+      - "Research literature synthesis and mathematical proofs"
+      - "Experimental ablation studies and paper reproductions"
+    rejection_veto_authority:
+      - "Theoretically ungrounded or non-reproducible algorithmic claims"
+    required_reviews:
+      - "architecture"
+
+  senior-machine-learning-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "senior-data-engineer"
+      - "senior-mlops-engineer"
+    approval_authority:
+      - "Classical ML pipelines and feature store transforms"
+      - "Offline model evaluation metrics and SHAP reports"
+    rejection_veto_authority: []
+    required_reviews:
+      - "architecture"
+      - "qa"
+
+  senior-deep-learning-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "senior-ai-research-engineer"
+      - "senior-mlops-engineer"
+    approval_authority:
+      - "Neural network architectures and loss function code"
+      - "Distributed GPU training scripts (DDP/FSDP)"
+      - "Model quantization and weight serialization"
+    rejection_veto_authority: []
+    required_reviews:
+      - "architecture"
+      - "qa"
+
+  senior-nlp-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "senior-llm-engineer"
+      - "senior-database-architect"
+    approval_authority:
+      - "Text preprocessing and tokenization pipelines"
+      - "Dense/sparse vector retrieval and semantic search ranking"
+    rejection_veto_authority: []
+    required_reviews:
+      - "architecture"
+      - "qa"
+
+  senior-llm-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "senior-mlops-engineer"
+      - "senior-security-engineer"
+    approval_authority:
+      - "RAG architecture implementations and prompt templates"
+      - "Tool-calling schemas and fine-tuning pipelines"
+      - "LLM evaluation benchmark suites"
+    rejection_veto_authority: []
+    required_reviews:
+      - "architecture"
+      - "security"
+      - "qa"
+
+  senior-generative-ai-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "brand-guardian"
+      - "senior-mlops-engineer"
+    approval_authority:
+      - "Multimodal generative pipelines (image, audio, video)"
+      - "ControlNet adapters and prompt/sampling presets"
+    rejection_veto_authority: []
+    required_reviews:
+      - "brand"
+      - "architecture"
+      - "qa"
+
+  senior-computer-vision-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "senior-mlops-engineer"
+      - "visual-qa"
+    approval_authority:
+      - "Computer vision detection, segmentation, and OCR pipelines"
+      - "Vision model optimization (TensorRT/ONNX)"
+    rejection_veto_authority: []
+    required_reviews:
+      - "architecture"
+      - "qa"
+
+  senior-mlops-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-ai-engineer"
+      - "senior-devops-engineer"
+      - "senior-machine-learning-engineer"
+    approval_authority:
+      - "Model serving topologies (vLLM, Triton) and registry promotion"
+      - "Model drift monitoring and automated CT/CD pipelines"
+    rejection_veto_authority:
+      - "Deployment of models with uncalibrated latency or memory leaks"
+    required_reviews:
+      - "security"
+      - "architecture"
+      - "qa"
+
+  senior-data-engineer:
+    role_type: "specialist"
+    can_modify_production_code: true
+    can_delegate_to: []
+    escalates_to:
+      - "senior-database-architect"
+      - "senior-security-engineer"
+      - "senior-devops-engineer"
+    approval_authority:
+      - "ETL/ELT data pipelines and streaming DAGs"
+      - "Data contracts and quality expectation suites"
+    rejection_veto_authority:
+      - "Data ingestion pipelines violating schemas or data contracts"
+    required_reviews:
+      - "architecture"
+      - "security"
+      - "qa"
+
+gates:
+  architecture_gate:
+    owner: "senior-system-architect"
+    mandatory: true
+    veto_power: true
+    criteria:
+      - "All significant architectural decisions documented in ADRs"
+      - "Rendering strategy (SSR/SSG/ISR) defined and aligned with SEO"
+      - "Caching and CDN topology specified"
+      - "System boundaries and interface contracts verified"
+
+  brand_gate:
+    owner: "brand-guardian"
+    mandatory: true
+    veto_power: true
+    criteria:
+      - "Design is original and aligned with brand guidelines"
+      - "Color palette uses curated HSL tokens with WCAG 2.1 AA contrast"
+      - "Typography hierarchy is clear (at least 3 distinct levels)"
+      - "Conversion readiness verified (dominant CTA above fold, trust signals present)"
+      - "Design tokens locked prior to frontend implementation"
+
+  security_gate:
+    owner: "senior-security-engineer"
+    mandatory: true
+    veto_power: true
+    criteria:
+      - "Zero critical or high severity CVEs in dependencies"
+      - "Authentication and RBAC/ABAC authorization implemented and verified"
+      - "Input validation enforced server-side on all endpoints"
+      - "Security headers (CSP, HSTS, X-Frame-Options) configured"
+      - "Zero secrets or credentials exposed in code, logs, or client bundles"
+
+  qa_gate:
+    owner: "senior-qa-architect"
+    mandatory: true
+    veto_power: true
+    criteria:
+      - "Zero test failures across unit, integration, and E2E suites"
+      - "Code coverage meets or exceeds 80% on business logic"
+      - "Zero lint errors and zero typecheck errors"
+      - "SEO tests passing (titles, meta, single h1, JSON-LD, sitemap)"
+
+  performance_gate:
+    owner: "senior-performance-engineer"
+    mandatory: true
+    veto_power: true
+    criteria:
+      - "Lighthouse Performance score >= 90 on mobile simulation"
+      - "Lighthouse SEO score >= 95 and Accessibility >= 95"
+      - "LCP < 2.5s, INP < 200ms, CLS < 0.1, TTFB < 200ms"
+      - "Initial JS bundle < 200KB gzipped"
+      - "API p95 latency < 200ms under load"
+
+  visual_gate:
+    owner: "visual-qa"
+    mandatory: true
+    veto_power: true
+    criteria:
+      - "Screenshot audits passing across 375px, 768px, 1280px, and 1920px viewports"
+      - "Visual diffs match approved high-fidelity designs"
+      - "Dark mode renders legibly without contrast artifacts"
+      - "Interactive touch targets >= 44x44px on mobile"
+
+  release_gate:
+    owner: "senior-devops-engineer"
+    mandatory: true
+    veto_power: true
+    criteria:
+      - "All preceding gates (Architecture, Brand, Security, QA, Performance, Visual) PASSED"
+      - "Health check endpoint (/healthz) returning 200"
+      - "Zero-downtime deployment strategy (Blue/Green or Canary) verified"
+      - "Human confirmation received (unless unattended CI mode explicitly enabled)"

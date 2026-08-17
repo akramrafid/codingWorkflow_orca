@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Orca Harness Task Execution Schema",
+  "description": "Schema for task execution specifications and execution envelopes processed by Orca harness runners.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "agent_role",
+    "model",
+    "harness",
+    "project_path",
+    "prompt",
+    "risk_level",
+    "mode",
+    "requires_approval",
+    "status"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique identifier for the task execution."
+    },
+    "agent_role": {
+      "type": "string",
+      "enum": [
+        "brand-guardian",
+        "design-researcher",
+        "pinterest-researcher",
+        "requirement-analyzer",
+        "senior-ai-engineer",
+        "senior-ai-research-engineer",
+        "senior-backend-engineer",
+        "senior-cloud-architect",
+        "senior-computer-vision-engineer",
+        "senior-data-engineer",
+        "senior-database-architect",
+        "senior-deep-learning-engineer",
+        "senior-devops-engineer",
+        "senior-frontend-engineer",
+        "senior-generative-ai-engineer",
+        "senior-llm-engineer",
+        "senior-machine-learning-engineer",
+        "senior-mlops-engineer",
+        "senior-nlp-engineer",
+        "senior-performance-engineer",
+        "senior-product-designer",
+        "senior-product-manager",
+        "senior-qa-architect",
+        "senior-security-engineer",
+        "senior-system-architect",
+        "senior-system-designer",
+        "ui-designer",
+        "ux-researcher",
+        "visual-qa"
+      ],
+      "description": "The specialist agent role executing the task."
+    },
+    "model": {
+      "type": "string",
+      "enum": [
+        "Gemini 3.6 Flash",
+        "Gemini 3.5 Flash",
+        "Gemini 3.1 Pro",
+        "Claude Sonnet 4.6",
+        "Claude Opus 4.6",
+        "GPT-OSS-120B"
+      ],
+      "description": "The selected cognitive model assigned to the execution."
+    },
+    "harness": {
+      "type": "string",
+      "enum": [
+        "antigravity-cli"
+      ],
+      "default": "antigravity-cli",
+      "description": "The execution runtime harness."
+    },
+    "project_path": {
+      "type": "string",
+      "description": "Absolute filesystem path to the root of the target project workspace."
+    },
+    "worktree_path": {
+      "type": ["string", "null"],
+      "description": "Optional path to an isolated Git worktree for parallel branch execution."
+    },
+    "prompt": {
+      "type": "string",
+      "description": "Actionable task instruction and prompt text."
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Operational and security risk classification."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "dry-run",
+        "execute"
+      ],
+      "default": "dry-run",
+      "description": "Execution mode: 'dry-run' simulates and validates without side-effects; 'execute' runs the task."
+    },
+    "requires_approval": {
+      "type": "boolean",
+      "description": "Indicates if senior lead or human sign-off is required before execution."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "running",
+        "completed",
+        "failed"
+      ],
+      "description": "Lifecycle status of the task execution."
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string" },
+        "worktree_branch": { "type": "string" },
+        "supervising_lead": { "type": "string" },
+        "approval_gate": { "type": "string" },
+        "execution_notes": { "type": "string" }
+      }
+    }
+  }
+}
