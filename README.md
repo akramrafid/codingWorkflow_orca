@@ -225,15 +225,8 @@ codingWorkflow_orca/
 └── mcp/                             # Model Context Protocol configurations
     └── mcp_config.template.json     # Workspace MCP server template
 ```
-
----
-
-## 📄 License
-
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
-
 ---
 
 <p align="center">
-  Built with ❤️ for <b>Personal use</b>
+  Built with love for <b>Personal use</b>
 </p>
