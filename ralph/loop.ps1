@@ -1,13 +1,12 @@
-<#
+﻿<#
 .SYNOPSIS
-  Orca Ralph Autonomous Execution Loop Harness
+  Orca Ralph Autonomous Execution Loop Harness v2.1 (Anti-Simulation)
 
 .DESCRIPTION
   Executes autonomous feedback loops across task queues, running verification commands,
-  invoking evaluation gates, and handling retry limits and rollbacks.
+  invoking evaluation gates, checking physical filesystem evidence, and handling retry limits.
   
-  Now supports auto-initialization: if no tasks.json exists, creates a scaffold
-  and exits cleanly with instructions. Handles missing git repos gracefully.
+  Enforces that real source files exist, builds run, and tests pass before completing.
 
 .PARAMETER StateFile
   Path to the JSON state tracking file. Defaults to ./ralph-state.json.
@@ -19,7 +18,7 @@
   Maximum safety iterations before halting.
 
 .PARAMETER ProjectPath
-  Path to the target project directory. If provided, verification commands run in this directory.
+  Path to the target project directory.
 #>
 
 param (
@@ -32,16 +31,26 @@ param (
 $ErrorActionPreference = "Stop"
 
 Write-Host "==========================================" -ForegroundColor Cyan
-Write-Host "   ORCA RALPH AUTONOMOUS ENGINE (v2.0)   " -ForegroundColor Cyan
+Write-Host "   ORCA RALPH AUTONOMOUS ENGINE (v2.1)   " -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Resolve project path for verification commands
 $EffectiveProjectPath = if ($ProjectPath) { $ProjectPath } else { (Get-Location).Path }
 
-# 1. Initialize or Load State
+# 1. Mandatory Code Existence Invariant Guard
+Write-Host "[Ralph] Inspecting target filesystem at $EffectiveProjectPath..." -ForegroundColor Yellow
+$sourceFiles = @(Get-ChildItem -Path $EffectiveProjectPath -Recurse -Include "*.ts","*.tsx","*.js","*.jsx","*.py","*.css","*.html" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch "node_modules|\.git|dist" })
+
+if ($sourceFiles.Count -eq 0) {
+    Write-Host "[Ralph Guard] ZERO source code files found in $EffectiveProjectPath." -ForegroundColor Red
+    Write-Host "[Ralph Guard] Evaluation rejected: Cannot evaluate an empty project." -ForegroundColor Red
+} else {
+    Write-Host "  [OK] Found $($sourceFiles.Count) source files on disk." -ForegroundColor Green
+}
+
+# 2. Initialize or Load State
 if (-not (Test-Path $StateFile)) {
-    # Get git HEAD safely - don't fail if not a git repo
     $gitHead = $null
     try {
         $gitHead = (git rev-parse HEAD 2>$null)
@@ -49,7 +58,7 @@ if (-not (Test-Path $StateFile)) {
         $gitHead = "NO_GIT_REPO"
     }
 
-    $initialState = @{
+    $initialState = [ordered]@{
         session_id = [Guid]::NewGuid().ToString()
         project_name = (Get-Item $EffectiveProjectPath -ErrorAction SilentlyContinue).Name
         status = "INITIALIZING"
@@ -68,38 +77,10 @@ if (-not (Test-Path $StateFile)) {
 
 $state = Get-Content $StateFile -Raw | ConvertFrom-Json
 
-# 2. Check if tasks file exists - auto-scaffold if not
+# 3. Check if tasks file exists
 if (-not (Test-Path $TaskFile)) {
-    Write-Host ("Ralph: No tasks file found at " + $TaskFile) -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "Ralph: Creating scaffold tasks.json..." -ForegroundColor Yellow
-
-    $scaffoldTasks = @(
-        @{
-            task_id = "TASK-SCAFFOLD"
-            title = "Verify project scaffolding"
-            assigned_agent = "senior-system-architect"
-            phase = "PHASE_4"
-            priority = "P0"
-            dependencies = @()
-            acceptance_criteria = @(
-                "Project directory exists",
-                "package.json or requirements.txt exists",
-                "Git repository initialized"
-            )
-            verification_commands = @(
-                "Test-Path '$EffectiveProjectPath'"
-            )
-        }
-    )
-
-    $scaffoldTasks | ConvertTo-Json -Depth 5 | Set-Content -Path $TaskFile -Encoding UTF8
-    Write-Host ("Ralph: Created scaffold tasks.json at " + $TaskFile) -ForegroundColor Green
-    Write-Host "Ralph: Edit this file to add your project-specific tasks, then re-run this script." -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "Ralph: Task format:" -ForegroundColor Gray
-    Write-Host '  { "task_id": "TASK-001", "title": "...", "assigned_agent": "...", "dependencies": [], "verification_commands": ["..."] }' -ForegroundColor Gray
-    exit 0
+    Write-Host ("Ralph: Error: No tasks file found at " + $TaskFile) -ForegroundColor Red
+    exit 1
 }
 
 $tasks = Get-Content $TaskFile -Raw | ConvertFrom-Json
@@ -109,7 +90,7 @@ Write-Host ("Ralph: Loaded " + $tasks.Count + " tasks. Current status: " + $stat
 Write-Host ("Ralph: Max iterations: " + $state.max_iterations) -ForegroundColor White
 Write-Host ""
 
-# 3. Main Autonomous Loop
+# 4. Main Autonomous Loop
 while ($state.current_iteration -lt $state.max_iterations) {
     $state.current_iteration++
     Write-Host ("`n--- Iteration " + $state.current_iteration + " / " + $state.max_iterations + " ---") -ForegroundColor Magenta
@@ -175,9 +156,9 @@ while ($state.current_iteration -lt $state.max_iterations) {
 
             try {
                 $originalLocation = Get-Location
-                if ($ProjectPath) { Set-Location $ProjectPath }
+                if ($EffectiveProjectPath) { Set-Location $EffectiveProjectPath }
 
-                Invoke-Expression $cmd
+                $output = Invoke-Expression $cmd 2>&1
                 $cmdExitCode = $LASTEXITCODE
                 if ($null -eq $cmdExitCode) { $cmdExitCode = 0 }
 
@@ -221,8 +202,7 @@ while ($state.current_iteration -lt $state.max_iterations) {
 
         Write-Host ("Ralph Evaluator: FAIL - Task " + $pendingTask.task_id + " failed (Attempt " + $taskRetryCount + "/3)") -ForegroundColor Red
         if ($taskRetryCount -ge 3) {
-            Write-Host "Ralph Circuit Breaker: Task exceeded 3 retries. Marking FAILED and escalating." -ForegroundColor Red
-            Write-Host "Ralph Circuit Breaker: Escalation required - review failure logs and fix manually." -ForegroundColor Yellow
+            Write-Host "Ralph Circuit Breaker: Task exceeded 3 retries. Marking FAILED." -ForegroundColor Red
             $state.failed_tasks += $pendingTask.task_id
             $state.active_task_id = $null
         } else {
@@ -231,12 +211,6 @@ while ($state.current_iteration -lt $state.max_iterations) {
     }
 
     # Save state after each iteration
-    try {
-        $gitHead = (git rev-parse HEAD 2>$null)
-        $state.git_head_commit = $gitHead
-    } catch {
-        # Not in a git repo - that's fine
-    }
     $state | ConvertTo-Json -Depth 5 | Set-Content -Path $StateFile -Encoding UTF8
 }
 

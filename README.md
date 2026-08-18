@@ -169,19 +169,13 @@ git clone https://github.com/akramrafid/codingWorkflow_orca.git
 cd codingWorkflow_orca
 ```
 
-### 2. Validate Agent Definitions
-Run the built-in PowerShell validation engine to check YAML frontmatter and required sections across all 29 agents:
+### 2. Run the Autonomous Orchestrator
+To start a new project from your prompt end-to-end:
 ```powershell
-.\scripts\validate-agents.ps1
+.\orca.ps1 -Prompt "Your project requirement" -Mode execute
 ```
 
-### 3. Install Global Antigravity Agents
-Synchronize Orca agents directly into your Antigravity global configuration (`~/.gemini/config/agents/`):
-```powershell
-.\scripts\install-agents.ps1
-```
-
-### 4. Run the Ralph Autonomous Execution Loop
+### 3. Run the Ralph Autonomous Execution Loop
 To run autonomous feedback-driven task execution:
 ```powershell
 .\ralph\loop.ps1 -StateFile .\ralph-state.json -TaskFile .\tasks.json -MaxIterations 30
@@ -194,6 +188,7 @@ To run autonomous feedback-driven task execution:
 ```
 codingWorkflow_orca/
 ├── ARCHITECTURE.md                  # Master architecture constitution & readiness checklist
+├── orca.ps1                         # Autonomous project builder & swarm CLI entrypoint
 ├── agents/                          # 29 specialist & senior subagent definitions
 │   ├── requirement-analyzer.md      # Entry point requirement extraction & capability mapping
 │   ├── senior-system-architect.md   # High-level architecture, rendering & caching
@@ -219,9 +214,6 @@ codingWorkflow_orca/
 │   └── harness-schema.json          # Harness schema
 ├── policies/                        # Global agent rules & governance
 │   └── AGENT_RULES.md               # 12 non-negotiable global agent rules
-├── scripts/                         # Automation & validation scripts
-│   ├── validate-agents.ps1          # Agent frontmatter validator
-│   └── install-agents.ps1           # Global Antigravity sync script
 └── mcp/                             # Model Context Protocol configurations
     └── mcp_config.template.json     # Workspace MCP server template
 ```

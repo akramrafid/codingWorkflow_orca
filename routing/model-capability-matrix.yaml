@@ -1,4 +1,4 @@
-# Orca Model Capability Matrix
+﻿# Orca Model Capability Matrix
 # Declarative registry, 14-dimensional capability scorecard, and task-class routing rules.
 # Current execution harness: antigravity-cli
 
@@ -7,6 +7,32 @@ system: "Orca Agent Operating System"
 harness: "antigravity-cli"
 
 models:
+  "Gemini 3.7 Flash":
+    id: "Gemini 3.7 Flash"
+    tier: "hybrid_reasoning_fast"
+    context_window_tokens: 1048576
+    vision_capable: true
+    latency_tier: "sub_second"
+    cost_tier: "standard"
+    strengths:
+      planning: 9.0
+      architecture: 8.5
+      coding: 9.5
+      debugging: 9.2
+      code_review: 9.0
+      reasoning: 9.5
+      research: 9.0
+      long_context_analysis: 9.8
+      ui_ux_reasoning: 9.2
+      ai_ml_reasoning: 9.0
+      mathematical_reasoning: 9.0
+      documentation: 9.5
+      testing: 9.2
+      autonomous_execution: 9.5
+    optimal_use_cases:
+      - "High-speed complex code implementation and refactoring"
+      - "Full-stack web application development"
+      - "Autonomous multi-phase orchestration loops"
   "Gemini 3.6 Flash":
     id: "Gemini 3.6 Flash"
     tier: "high_throughput_fast"
@@ -328,3 +354,4 @@ task_class_profiles:
     fallbacks: ["Claude Opus 4.6", "Gemini 3.6 Flash"]
     review_strategy: "same_model_fresh_context"
     default_risk: "medium"
+

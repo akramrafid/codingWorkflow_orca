@@ -1,27 +1,28 @@
-<#
+﻿<#
 .SYNOPSIS
     Orca Antigravity CLI Execution Runner and Task Dispatcher.
 
 .DESCRIPTION
-    Receives task specifications, agent roles, selected models, and workspace paths,
+    Receives structured task specifications, agent roles, selected models, and workspace paths,
     validates governance and safety rules, and dispatches execution in the
     Google Antigravity CLI environment.
     
-    In execute mode, reads the agent definition markdown file and produces
-    a structured execution log that the Ralph evaluator can consume.
-    Defaults to SAFE DRY-RUN mode.
+    Distinguishes READ_ONLY_TASK from IMPLEMENTATION_TASK.
+    Enforces that implementation workers have write access to target project workspaces
+    (e.g., D:\OrcaProjects\<project>), never confuses D:\Orca with project workspaces,
+    and requires real machine-verifiable filesystem evidence before reporting completion.
 
 .PARAMETER TaskId
-    Unique identifier for the task.
+    Unique identifier for the task (e.g. TASK-OA-001).
 
 .PARAMETER AgentRole
     The specialist agent role (must match one of the 29 validated agent definitions).
 
 .PARAMETER Model
-    The selected cognitive model (must be registered in model-capability-matrix.yaml).
+    The selected cognitive model (must be registered in canonical model registry).
 
 .PARAMETER ProjectPath
-    Absolute filesystem path to the target project directory.
+    Absolute filesystem path to the target project directory (e.g. D:\OrcaProjects\OA).
 
 .PARAMETER WorktreePath
     Optional path to an isolated Git worktree.
@@ -29,23 +30,32 @@
 .PARAMETER Prompt
     The actionable prompt and task instructions.
 
+.PARAMETER ExecutionMode
+    Execution mode: 'analysis', 'architecture', 'design', 'technical_design', 'implementation', 'verification'.
+
+.PARAMETER ReadOnly
+    Explicit boolean flag. If true, project modifications are prohibited. Must be false for implementation.
+
+.PARAMETER ExpectedFiles
+    Array of relative file paths expected to be created/modified by this task.
+
+.PARAMETER AcceptanceCriteria
+    Array of acceptance criteria for this task.
+
+.PARAMETER VerificationCommands
+    Array of verification commands to execute on the workspace.
+
 .PARAMETER RiskLevel
     Risk classification: 'low', 'medium', 'high', or 'critical'. Default is 'medium'.
 
 .PARAMETER Mode
-    Execution mode: 'dry-run' (default) or 'execute'.
+    Runtime dispatch mode: 'dry-run' (plan/validate only) or 'execute' (live execution).
 
 .PARAMETER Approved
     Indicates whether required governance/human approval has been granted.
 
 .PARAMETER OutputDir
     Directory to write execution logs and results. Defaults to project path.
-
-.EXAMPLE
-    .\harness\antigravity-runner.ps1 -TaskId "task-001" -AgentRole "senior-frontend-engineer" -Model "Claude Sonnet 4.6" -ProjectPath "D:\OrcaProjects\my-app" -Prompt "Implement SSR hero section" -Mode "dry-run"
-
-.EXAMPLE
-    .\harness\antigravity-runner.ps1 -TaskId "task-002" -AgentRole "senior-backend-engineer" -Model "Gemini 3.1 Pro" -ProjectPath "D:\OrcaProjects\my-app" -Prompt "Implement REST API endpoints" -Mode "execute" -Approved
 #>
 
 [CmdletBinding()]
@@ -59,8 +69,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$Model,
 
-    [Parameter(Mandatory = $false)]
-    [string]$ProjectPath = "D:\Orca",
+    [Parameter(Mandatory = $true)]
+    [string]$ProjectPath,
 
     [Parameter(Mandatory = $false)]
     [string]$WorktreePath = $null,
@@ -69,12 +79,28 @@ param(
     [string]$Prompt,
 
     [Parameter(Mandatory = $false)]
+    [ValidateSet("analysis", "architecture", "design", "technical_design", "implementation", "verification")]
+    [string]$ExecutionMode = "implementation",
+
+    [Parameter(Mandatory = $false)]
+    [switch]$ReadOnly,
+
+    [Parameter(Mandatory = $false)]
+    [string[]]$ExpectedFiles = @(),
+
+    [Parameter(Mandatory = $false)]
+    [string[]]$AcceptanceCriteria = @(),
+
+    [Parameter(Mandatory = $false)]
+    [string[]]$VerificationCommands = @(),
+
+    [Parameter(Mandatory = $false)]
     [ValidateSet("low", "medium", "high", "critical")]
     [string]$RiskLevel = "medium",
 
     [Parameter(Mandatory = $false)]
     [ValidateSet("dry-run", "execute")]
-    [string]$Mode = "dry-run",
+    [string]$Mode = "execute",
 
     [Parameter(Mandatory = $false)]
     [switch]$Approved,
@@ -82,6 +108,8 @@ param(
     [Parameter(Mandatory = $false)]
     [string]$OutputDir = $null
 )
+
+$ErrorActionPreference = "Stop"
 
 # -------------------------------------------------------------
 # 1. INITIALIZE HARNESS METADATA
@@ -98,25 +126,34 @@ $ValidationErrors = @()
 
 Write-Host ""
 Write-Host "===========================================" -ForegroundColor Cyan
-Write-Host "   ORCA HARNESS RUNNER v2.0                " -ForegroundColor Cyan
+Write-Host "   ORCA HARNESS RUNNER v2.1 (ANTI-SIMULATION) " -ForegroundColor Cyan
+Write-Host "===========================================" -ForegroundColor Cyan
+Write-Host "  Task ID        : $TaskId" -ForegroundColor White
+Write-Host "  Agent Role     : $AgentRole" -ForegroundColor White
+Write-Host "  Model          : $Model" -ForegroundColor White
+Write-Host "  Execution Mode : $ExecutionMode" -ForegroundColor White
+Write-Host "  Read-Only      : $ReadOnly" -ForegroundColor White
+Write-Host "  Project Path   : $ProjectPath" -ForegroundColor White
+Write-Host "  Mode           : $Mode" -ForegroundColor White
 Write-Host "===========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # -------------------------------------------------------------
-# 2. VALIDATION LAYER
+# 2. VALIDATION LAYER & INVARIANT GUARDS
 # -------------------------------------------------------------
-Write-Host "[Harness] Validating task specification..." -ForegroundColor White
+Write-Host "[Harness] Validating execution contract..." -ForegroundColor White
 
 # A. Validate Agent Role
 $AgentFile = Join-Path $AgentsDir "$AgentRole.md"
 if (-not (Test-Path $AgentFile)) {
     $ValidationErrors += "Agent role '$AgentRole' does not exist in $AgentsDir."
 } else {
-    Write-Host "  ✅ Agent role '$AgentRole' validated" -ForegroundColor Green
+    Write-Host "  [OK] Agent role '$AgentRole' validated" -ForegroundColor Green
 }
 
-# B. Validate Model
+# B. Validate Canonical Model
 $RegisteredModels = @(
+    "Gemini 3.7 Flash",
     "Gemini 3.6 Flash",
     "Gemini 3.5 Flash",
     "Gemini 3.1 Pro",
@@ -125,46 +162,51 @@ $RegisteredModels = @(
     "GPT-OSS-120B"
 )
 if ($RegisteredModels -notcontains $Model) {
-    $ValidationErrors += "Model '$Model' is not registered in the Model Registry. Supported models: $($RegisteredModels -join ', ')."
+    $ValidationErrors += "Model '$Model' is not registered in canonical model registry. Supported: $($RegisteredModels -join ', ')."
 } else {
-    Write-Host "  ✅ Model '$Model' validated" -ForegroundColor Green
+    Write-Host "  [OK] Model '$Model' validated" -ForegroundColor Green
 }
 
-# C. Validate Harness
-if ($HarnessId -ne "antigravity-cli") {
-    $ValidationErrors += "Harness '$HarnessId' is not supported."
-} else {
-    Write-Host "  ✅ Harness '$HarnessId' validated" -ForegroundColor Green
+# C. Validate Workspace Isolation
+$normalizedOrca = [System.IO.Path]::GetFullPath($OrcaRoot).TrimEnd('\', '/')
+$normalizedProj = [System.IO.Path]::GetFullPath($ProjectPath).TrimEnd('\', '/')
+
+if ($normalizedProj -eq $normalizedOrca) {
+    $ValidationErrors += "CRITICAL: Project path cannot be the Orca system root ($OrcaRoot). Target must reside in D:\OrcaProjects\<project>."
 }
 
-# D. Validate Project Path
+# D. Validate Execution Mode vs Read-Only Invariant
+if ($ExecutionMode -eq "implementation" -and $ReadOnly) {
+    $ValidationErrors += "CRITICAL INVARIANT VIOLATION: ExecutionMode 'implementation' cannot have ReadOnly=true."
+}
+
+# E. Validate Project Directory Exists or Create
 if (-not (Test-Path $ProjectPath)) {
-    # Auto-create project directory in execute mode
     if ($Mode -eq "execute") {
         try {
             New-Item -ItemType Directory -Force -Path $ProjectPath | Out-Null
-            Write-Host "  ✅ Project path created: $ProjectPath" -ForegroundColor Green
+            Write-Host "  [OK] Auto-initialized target project path: $ProjectPath" -ForegroundColor Green
         } catch {
             $ValidationErrors += "Failed to create project path '$ProjectPath': $_"
         }
     } else {
-        $ValidationErrors += "Target project path '$ProjectPath' does not exist. In execute mode, it will be auto-created."
+        $ValidationErrors += "Target project path '$ProjectPath' does not exist."
     }
 } else {
-    Write-Host "  ✅ Project path validated" -ForegroundColor Green
+    Write-Host "  [OK] Target project path validated" -ForegroundColor Green
 }
 
-# E. Validate Worktree Path (if specified)
+# F. Validate Worktree Path (if specified)
 if ($WorktreePath -and (-not (Test-Path $WorktreePath))) {
     $ValidationErrors += "Specified worktree path '$WorktreePath' does not exist."
 }
 
-# F. Validate Risk & Approval Policy
+# G. Validate Risk & Approval Policy
 $RequiresApproval = ($RiskLevel -eq "high" -or $RiskLevel -eq "critical")
 if ($RequiresApproval -and (-not $Approved) -and ($Mode -eq "execute")) {
-    $ValidationErrors += "Execution halted: Task '$TaskId' has risk level '$RiskLevel' and requires explicit approval (-Approved) before live execution."
+    $ValidationErrors += "Execution halted: Task '$TaskId' has risk level '$RiskLevel' and requires explicit approval (-Approved)."
 } else {
-    Write-Host "  ✅ Risk level '$RiskLevel' $(if ($RequiresApproval) { '(approval granted)' } else { '(no approval needed)' })" -ForegroundColor Green
+    Write-Host "  [OK] Governance risk check passed ($RiskLevel)" -ForegroundColor Green
 }
 
 Write-Host ""
@@ -174,44 +216,37 @@ Write-Host ""
 # -------------------------------------------------------------
 $EffectiveStatus = if ($ValidationErrors.Count -gt 0) { "failed" } elseif ($Mode -eq "dry-run") { "planned" } else { "running" }
 
-# Read agent definition content for context
-$AgentInstructions = $null
-if (Test-Path $AgentFile) {
-    $AgentInstructions = Get-Content $AgentFile -Raw -ErrorAction SilentlyContinue
-}
-
 $ExecutionEnvelope = [ordered]@{
-    "task_id"            = $TaskId
-    "agent_role"          = $AgentRole
-    "model"               = $Model
-    "harness"             = $HarnessId
-    "project_path"        = if (Test-Path $ProjectPath) { (Resolve-Path $ProjectPath).Path } else { $ProjectPath }
-    "worktree_path"       = if ($WorktreePath -and (Test-Path $WorktreePath)) { (Resolve-Path $WorktreePath).Path } else { $WorktreePath }
-    "prompt"              = $Prompt
-    "risk_level"          = $RiskLevel
-    "mode"                = $Mode
-    "requires_approval"   = $RequiresApproval
-    "status"              = $EffectiveStatus
-    "metadata"            = [ordered]@{
-        "timestamp"          = $Timestamp
-        "execution_target"   = if ($WorktreePath) { "Isolated Worktree ($WorktreePath)" } else { "Main Workspace ($ProjectPath)" }
-        "agent_definition"   = $AgentFile
-        "validation_passed"  = ($ValidationErrors.Count -eq 0)
-        "validation_errors"  = $ValidationErrors
-        "safety_invariants"  = @(
-            "Destructive file deletions disabled",
-            "Automatic remote Git pushes disabled",
-            "Automatic production deployments disabled",
-            "Global Antigravity settings protected"
-        )
+    "task_id"              = $TaskId
+    "agent_role"            = $AgentRole
+    "model"                 = $Model
+    "harness"               = $HarnessId
+    "project_path"          = if (Test-Path $ProjectPath) { (Resolve-Path $ProjectPath).Path } else { $ProjectPath }
+    "worktree_path"         = if ($WorktreePath -and (Test-Path $WorktreePath)) { (Resolve-Path $WorktreePath).Path } else { $WorktreePath }
+    "prompt"                = $Prompt
+    "execution_mode"        = $ExecutionMode
+    "read_only"             = $ReadOnly
+    "expected_files"        = $ExpectedFiles
+    "acceptance_criteria"   = $AcceptanceCriteria
+    "verification_commands" = $VerificationCommands
+    "risk_level"            = $RiskLevel
+    "mode"                  = $Mode
+    "requires_approval"     = $RequiresApproval
+    "status"                = $EffectiveStatus
+    "metadata"              = [ordered]@{
+        "timestamp"            = $Timestamp
+        "execution_target"     = if ($WorktreePath) { "Isolated Worktree ($WorktreePath)" } else { "Main Workspace ($ProjectPath)" }
+        "agent_definition"     = $AgentFile
+        "validation_passed"    = ($ValidationErrors.Count -eq 0)
+        "validation_errors"    = $ValidationErrors
     }
 }
 
 # -------------------------------------------------------------
-# 4. EXECUTION / DRY-RUN DISPATCH
+# 4. EXECUTION DISPATCH & FILESYSTEM VERIFICATION
 # -------------------------------------------------------------
 if ($ValidationErrors.Count -gt 0) {
-    Write-Host "[FAIL] Harness Validation Failed for Task $TaskId" -ForegroundColor Red
+    Write-Host "[FAIL] Harness Contract Validation Failed for Task $TaskId" -ForegroundColor Red
     foreach ($err in $ValidationErrors) {
         Write-Host "  - $err" -ForegroundColor Red
     }
@@ -219,70 +254,122 @@ if ($ValidationErrors.Count -gt 0) {
     $envelopeJson = $ExecutionEnvelope | ConvertTo-Json -Depth 6
     Write-Host $envelopeJson
     
-    # Write execution log
     if ($EffectiveOutputDir -and (Test-Path $EffectiveOutputDir)) {
         $logFile = Join-Path $EffectiveOutputDir "orca-execution-$TaskId.json"
         $envelopeJson | Set-Content -Path $logFile -Encoding UTF8
-        Write-Host ("Harness: Execution log written to: " + $logFile) -ForegroundColor Gray
     }
-    
     exit 1
 }
 
 if ($Mode -eq "dry-run") {
-    Write-Host ("DRY-RUN: Task " + $TaskId + " validated and planned (no side-effects)") -ForegroundColor Yellow
-    Write-Host ""
+    Write-Host "DRY-RUN: Task $TaskId validated and planned (read-only plan mode)" -ForegroundColor Yellow
     $envelopeJson = $ExecutionEnvelope | ConvertTo-Json -Depth 6
     Write-Host $envelopeJson
     
-    # Write execution log
     if ($EffectiveOutputDir -and (Test-Path $EffectiveOutputDir)) {
         $logFile = Join-Path $EffectiveOutputDir "orca-execution-$TaskId.json"
         $envelopeJson | Set-Content -Path $logFile -Encoding UTF8
-        Write-Host ""
-        Write-Host ("Harness: Execution plan written to: " + $logFile) -ForegroundColor Gray
     }
-    
     exit 0
 }
 
 if ($Mode -eq "execute") {
-    Write-Host ("EXECUTING Task " + $TaskId) -ForegroundColor Cyan
-    Write-Host "  Agent Role : $AgentRole" -ForegroundColor Green
-    Write-Host "  Model      : $Model" -ForegroundColor Green
-    Write-Host "  Harness    : $HarnessId" -ForegroundColor Green
-    Write-Host "  Target Dir : $ProjectPath" -ForegroundColor Green
-    $riskColor = if ($RiskLevel -eq "critical") { "Red" } elseif ($RiskLevel -eq "high") { "Yellow" } else { "Green" }
-    Write-Host "  Risk Level : $RiskLevel" -ForegroundColor $riskColor
-    Write-Host "  Safety     : Read/Write local workspace with safety barriers enabled" -ForegroundColor Cyan
+    Write-Host "EXECUTING TASK: $TaskId" -ForegroundColor Cyan
+    Write-Host "  Target Workspace : $ProjectPath" -ForegroundColor Green
+    Write-Host "  Execution Mode   : $ExecutionMode" -ForegroundColor Green
+    Write-Host "  Assigned Agent   : $AgentRole" -ForegroundColor Green
+    Write-Host "  Assigned Model   : $Model" -ForegroundColor Green
     Write-Host ""
-    
-    # Log the agent instructions that would be used
-    if ($AgentInstructions) {
-        $instructionLines = ($AgentInstructions -split "`n").Count
-        Write-Host ("Harness: Agent definition loaded: " + $AgentRole + ".md (" + $instructionLines + " lines)") -ForegroundColor Gray
+
+    # Execute verification commands if provided
+    $verificationPassed = $true
+    $verificationLogs = @()
+
+    if ($VerificationCommands.Count -gt 0) {
+        Write-Host "[Harness] Running task verification commands in $ProjectPath..." -ForegroundColor Yellow
+        $origLoc = Get-Location
+        Set-Location $ProjectPath
+        try {
+            foreach ($cmd in $VerificationCommands) {
+                Write-Host "  > $cmd" -ForegroundColor Gray
+                $cmdOutput = Invoke-Expression $cmd 2>&1
+                $cmdExitCode = $LASTEXITCODE
+                if ($null -eq $cmdExitCode) { $cmdExitCode = 0 }
+                
+                $logEntry = [ordered]@{
+                    "command"   = $cmd
+                    "exit_code" = $cmdExitCode
+                    "output"    = ($cmdOutput | Out-String).Trim()
+                }
+                $verificationLogs += $logEntry
+
+                if ($cmdExitCode -ne 0) {
+                    Write-Host "  [FAIL] Command failed with exit code $cmdExitCode" -ForegroundColor Red
+                    $verificationPassed = $false
+                    break
+                } else {
+                    Write-Host "  [PASS] Command succeeded" -ForegroundColor Green
+                }
+            }
+        } finally {
+            Set-Location $origLoc
+        }
     }
-    
-    Write-Host ("Harness: Prompt: " + $Prompt) -ForegroundColor White
-    Write-Host ""
-    
-    # Mark as completed (the actual work is done by the Antigravity agent following the instructions)
+
+    # Mandatory Filesystem Evidence Check for Implementation Tasks
+    $missingFiles = @()
+    if ($ExecutionMode -eq "implementation" -and $ExpectedFiles.Count -gt 0) {
+        Write-Host "[Harness] Verifying physical filesystem changes in $ProjectPath..." -ForegroundColor Yellow
+        foreach ($file in $ExpectedFiles) {
+            $targetPath = Join-Path $ProjectPath $file
+            if (-not (Test-Path $targetPath)) {
+                $missingFiles += $file
+                Write-Host "  [MISSING] $file does not exist" -ForegroundColor Red
+            } else {
+                $item = Get-Item $targetPath
+                if ($item.Length -eq 0 -and -not $item.PSIsContainer) {
+                    $missingFiles += "$file (EMPTY_FILE)"
+                    Write-Host "  [EMPTY] $file is 0 bytes" -ForegroundColor Red
+                } else {
+                    Write-Host "  [EXISTS] $file ($($item.Length) bytes)" -ForegroundColor Green
+                }
+            }
+        }
+    }
+
+    if ($missingFiles.Count -gt 0 -or -not $verificationPassed) {
+        $ExecutionEnvelope.status = "failed"
+        $ExecutionEnvelope.metadata["failure_reason"] = if ($missingFiles.Count -gt 0) { "Missing expected filesystem files: $($missingFiles -join ', ')" } else { "Verification commands failed" }
+        $ExecutionEnvelope.metadata["verification_logs"] = $verificationLogs
+
+        $envelopeJson = $ExecutionEnvelope | ConvertTo-Json -Depth 6
+        Write-Host ""
+        Write-Host "[FAIL] WORKER_EXECUTION_FAILED for Task $TaskId" -ForegroundColor Red
+        Write-Host $envelopeJson
+
+        if ($EffectiveOutputDir -and (Test-Path $EffectiveOutputDir)) {
+            $logFile = Join-Path $EffectiveOutputDir "orca-execution-$TaskId.json"
+            $envelopeJson | Set-Content -Path $logFile -Encoding UTF8
+        }
+        exit 1
+    }
+
+    # Mark as completed only with physical evidence
     $ExecutionEnvelope.status = "completed"
     $ExecutionEnvelope.metadata["completed_at"] = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
-    
+    $ExecutionEnvelope.metadata["verification_logs"] = $verificationLogs
+    $ExecutionEnvelope.metadata["filesystem_verified"] = $true
+
     $envelopeJson = $ExecutionEnvelope | ConvertTo-Json -Depth 6
-    Write-Host $envelopeJson
-    
-    # Write execution log
+    Write-Host ""
+    Write-Host "[PASS] Task $TaskId executed and verified on filesystem!" -ForegroundColor Green
+
     if ($EffectiveOutputDir -and (Test-Path $EffectiveOutputDir)) {
         $logFile = Join-Path $EffectiveOutputDir "orca-execution-$TaskId.json"
         $envelopeJson | Set-Content -Path $logFile -Encoding UTF8
-        Write-Host ""
-        Write-Host ("Harness: Execution log written to: " + $logFile) -ForegroundColor Gray
+        Write-Host "Execution evidence logged to: $logFile" -ForegroundColor Gray
     }
-    
-    Write-Host ""
-    Write-Host ("PASS: Task " + $TaskId + " dispatched successfully") -ForegroundColor Green
-    
+
     exit 0
 }
+

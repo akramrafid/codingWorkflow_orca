@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Orca Harness Task Execution Schema",
   "description": "Schema for task execution specifications and execution envelopes processed by Orca harness runners.",
@@ -12,6 +12,8 @@
     "prompt",
     "risk_level",
     "mode",
+    "execution_mode",
+    "read_only",
     "requires_approval",
     "status"
   ],
@@ -58,6 +60,7 @@
     "model": {
       "type": "string",
       "enum": [
+        "Gemini 3.7 Flash",
         "Gemini 3.6 Flash",
         "Gemini 3.5 Flash",
         "Gemini 3.1 Pro",
@@ -87,6 +90,27 @@
       "type": "string",
       "description": "Actionable task instruction and prompt text."
     },
+    "execution_mode": {
+      "type": "string",
+      "enum": [
+        "analysis",
+        "architecture",
+        "design",
+        "technical_design",
+        "implementation",
+        "verification"
+      ],
+      "description": "Lifecycle phase execution mode."
+    },
+    "read_only": {
+      "type": "boolean",
+      "description": "Whether this task is restricted from writing to disk."
+    },
+    "expected_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of relative file paths that must exist post-execution."
+    },
     "risk_level": {
       "type": "string",
       "enum": [
@@ -103,7 +127,7 @@
         "dry-run",
         "execute"
       ],
-      "default": "dry-run",
+      "default": "execute",
       "description": "Execution mode: 'dry-run' simulates and validates without side-effects; 'execute' runs the task."
     },
     "requires_approval": {
@@ -121,14 +145,7 @@
       "description": "Lifecycle status of the task execution."
     },
     "metadata": {
-      "type": "object",
-      "properties": {
-        "timestamp": { "type": "string" },
-        "worktree_branch": { "type": "string" },
-        "supervising_lead": { "type": "string" },
-        "approval_gate": { "type": "string" },
-        "execution_notes": { "type": "string" }
-      }
+      "type": "object"
     }
   }
 }

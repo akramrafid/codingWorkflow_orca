@@ -1,7 +1,7 @@
-# Orca Execution Harness Registry
+﻿# Orca Execution Harness Registry
 # Declarative registry defining active and pluggable execution runtime harnesses.
 
-version: "1.0.0"
+version: "1.1.0"
 system: "Orca Agent Operating System"
 default_harness: "antigravity-cli"
 
@@ -22,7 +22,10 @@ harnesses:
       - "permissions"
       - "mcp"
       - "background_tasks"
+      - "filesystem_verification"
+      - "structured_contracts"
     supported_models:
+      - "Gemini 3.7 Flash"
       - "Gemini 3.6 Flash"
       - "Gemini 3.5 Flash"
       - "Gemini 3.1 Pro"
@@ -41,6 +44,6 @@ harnesses:
       - "/learn"
     configuration:
       runner_script: "harness/antigravity-runner.ps1"
-      default_mode: "dry-run"
+      default_mode: "execute"
       safety_enforced: true
       require_human_approval_for_high_risk: true
