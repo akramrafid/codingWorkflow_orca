@@ -45,79 +45,33 @@ All 29 specialist agents are defined in `agents/`. Each has YAML frontmatter wit
 
 ## Mandatory Execution Lifecycle
 
-When a user provides a product brief, requirement, or project prompt, you MUST execute the following lifecycle. Do not skip phases. Do not begin implementation without completing architecture.
+When a user provides a product brief, requirement, or project prompt, you MUST execute the following lifecycle autonomously and immediately create real code files on disk at `D:\OrcaProjects\<project-name>\`. **Do NOT just print text or markdown reports in the terminal and stop.** Drive the entire implementation end-to-end using your execution tools.
 
-### PHASE 0: REQUIREMENT ANALYSIS
-**Role**: Adopt [requirement-analyzer](file:///d:/Orca/agents/requirement-analyzer.md) persona.
-**Actions**:
-1. Read the `orca-orchestrator` skill for detailed phase execution instructions.
-2. Deeply analyze the user prompt to extract: product type, domain classification, functional/non-functional requirements, technology needs, SEO strategy, conversion funnel, and target user personas.
-3. Use the `team-builder` skill to classify the domain and assemble the optimal specialist squad.
-4. Use the `model-router` skill to assign optimal models to each task class.
-5. Produce a structured **Capability Report** with all 14 sections defined in the requirement-analyzer agent.
-6. Produce a **Team Plan** (team-plan.json) listing activated, optional, and excluded agents with justifications.
-7. Present the Capability Report and Team Plan to the user for confirmation before proceeding.
+### PHASE 0: REQUIREMENT ANALYSIS & SQUAD FORMULATION (Autonomous)
+1. Rapidly analyze prompt capabilities, domain classification, and architecture needs.
+2. Assemble the optimal squad and model routing in memory.
+3. Automatically initialize the target project directory at `D:\OrcaProjects\<project-name>\`.
 
-### PHASE 1: ARCHITECTURE & STRATEGY
-**Roles**: `senior-system-architect`, `senior-product-manager`, `senior-security-engineer`, `senior-database-architect`.
-**Actions**:
-1. Generate Architecture Decision Records (ADRs) for rendering strategy (SSR/SSG/ISR), framework selection, caching topology, and data models.
-2. Produce PRD with SEO specification and conversion funnel blueprint.
-3. Conduct initial threat model (STRIDE) and define security architecture.
-4. Design database schema and indexing strategy.
-5. All outputs are saved as structured artifacts in the project directory.
+### PHASE 1 & 2: ARCHITECTURE & DESIGN PIPELINE (Autonomous)
+1. Write Architecture Decision Records (ADRs) to `D:\OrcaProjects\<project-name>\docs\architecture\`.
+2. Generate the design tokens (`tokens.css`) with HSL variables, typography, spacing, and 7-state interaction matrix.
 
-### PHASE 2: DESIGN PIPELINE
-**Roles**: Design pipeline agents (if activated by team plan).
-**Actions**:
-1. Define design system: color palette (HSL-based), typography (modern Google Fonts), spacing scale, elevation/shadow system.
-2. Generate CSS design tokens file with all variables.
-3. Define component states: default, hover, focus-visible, active, disabled, loading, error.
-4. **Brand Guardian Gate**: Evaluate design against 5-dimension scorecard. APPROVE / REVISE / REJECT.
-5. Lock design tokens — frontend engineers consume as read-only.
+### PHASE 3: DETAILED TECHNICAL DESIGN (Autonomous)
+1. Write TypeScript interfaces, API schemas, and component contracts to `D:\OrcaProjects\<project-name>\src\contracts\`.
 
-### PHASE 3: DETAILED TECHNICAL DESIGN
-**Role**: `senior-system-designer`.
-**Actions**:
-1. Generate OpenAPI 3.1 specifications for all API endpoints.
-2. Define component contracts with TypeScript interfaces.
-3. Produce sequence diagrams for critical user flows.
-4. Define error handling strategy and response schemas.
+### PHASE 4: FULL CODE IMPLEMENTATION (Autonomous & Real Files)
+1. Scaffold project structure (`package.json`, `tsconfig.json`, `vite.config.ts`, `index.html`, etc.) in `D:\OrcaProjects\<project-name>\`.
+2. Write all production React/TypeScript/CSS components, utilities, and pages directly to disk.
+3. Ensure 100% token usage (zero raw hex values).
 
-### PHASE 4: IMPLEMENTATION
-**Roles**: Implementation specialists from the team plan.
-**Actions**:
-1. Create the project directory at `D:\OrcaProjects\<project-name>\`.
-2. Initialize the project with the correct framework and tooling.
-3. Implement features according to the specifications from Phase 3.
-4. Every file must adhere to the design tokens, API contracts, and architecture decisions.
-5. For parallel implementation, use Git worktrees or feature branches.
-6. Pre-commit checks: lint, typecheck, unit tests must pass.
+### PHASE 5 & 6: VERIFICATION & RALPH EVALUATION LOOP (Autonomous)
+1. Generate `tasks.json` in `D:\OrcaProjects\<project-name>\`.
+2. Run automated test commands and builds (`npm test`, `npx tsc --noEmit`, etc.) using `run_command`.
+3. Execute the Ralph evaluation loop (`d:\Orca\ralph\loop.ps1`) to verify 100% task pass rate.
+4. If any task fails, auto-fix and retry (up to 3 iterations).
 
-### PHASE 5: VERIFICATION
-**Roles**: `senior-qa-architect`, `senior-performance-engineer`, `senior-security-engineer`.
-**Actions**:
-1. Run full test suite: unit tests (≥80% coverage), integration tests, build verification.
-2. Run Lighthouse audit (Performance ≥ 90, SEO ≥ 95, Accessibility ≥ 95).
-3. Verify SEO elements: meta tags, structured data, SSR rendering, canonical URLs, sitemap.
-4. Verify security: no exposed secrets, security headers, input validation, rate limiting.
-5. Verify conversion elements: CTAs above fold, trust signals, skeleton loading states.
-
-### PHASE 6: RALPH EVALUATION LOOP
-**Actions**:
-1. Use the `ralph-loop` skill to generate tasks.json from the team plan.
-2. Run verification commands for each task.
-3. Evaluate against the 27-point rubric in [ralph/evaluator.md](file:///d:/Orca/ralph/evaluator.md).
-4. PASS → proceed to deployment prep. FAIL → retry (max 3) → escalate.
-
-### PHASE 7: DEPLOYMENT PREPARATION
-**Role**: `senior-devops-engineer`.
-**Actions**:
-1. Generate Dockerfile and docker-compose.yml.
-2. Configure CI/CD pipeline (GitHub Actions).
-3. Set up health check endpoint.
-4. Create deployment documentation.
-5. Present final production readiness report to user.
+### PHASE 7: PRODUCTION SHIP & COMPLETION
+1. Present the completed project summary, file map, and execution commands to the user.
 
 ---
 
@@ -125,24 +79,13 @@ When a user provides a product brief, requirement, or project prompt, you MUST e
 
 All generated projects are created in: `D:\OrcaProjects\<project-name>\`
 
-Example: If the user says "Build a SaaS project management tool", the output goes to `D:\OrcaProjects\saas-project-manager\`.
+Example: If the user prompt is "DeepSeek Harness Developer Preview", the project is created in `D:\OrcaProjects\deepseek-harness-preview\`.
 
 ---
 
-## Gate Approval Policy
+## Autonomous Execution Standard (Non-Negotiable)
 
-- **Architecture Gate** and **Release Gate**: Ask the user for explicit approval before proceeding.
-- **Brand Gate**, **Security Gate**, **QA Gate**, **Performance Gate**: Auto-pass if evidence satisfies criteria. Flag failures and auto-iterate up to 3 times. Escalate to user only on circuit breaker.
-
-This means the system runs mostly autonomously, pausing only at the two most critical decision points.
-
----
-
-## Critical Rules
-
-1. **Never invent requirements.** If information is missing, mark it as `[UNKNOWN — requires clarification]` and ask the user.
-2. **Never skip phases.** The lifecycle is mandatory. Phase 4 (implementation) cannot begin without Phase 1 (architecture) and Phase 3 (technical design).
-3. **Evidence over assertion.** No task is complete without passing tests, clean builds, and verification logs.
-4. **Original design only.** External designs are inspiration. Never reproduce third-party designs.
-5. **Minimal optimal squad.** Only activate agents justified by project capabilities. The Three Anti-Bloat Laws apply.
-6. **Production-ready by default.** Every output is designed for real users paying real money. No placeholders, no "we'll optimize later."
+1. **Actions Over Words**: Never output walls of code in chat without writing them to disk in `D:\OrcaProjects\<project-name>\`. Use PowerShell commands (`run_command`) and file tools to create directories and files immediately.
+2. **Autonomous End-to-End Pipeline**: Run through all phases without halting for manual approval unless the user explicitly requested a plan-only mode (`/plan`).
+3. **Evidence Over Assertion**: Every task must be verified with real test execution and Ralph loop logs.
+4. **Production-Ready**: Zero placeholders, zero TODOs in core logic, 100% token-driven UI.

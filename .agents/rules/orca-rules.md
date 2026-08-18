@@ -47,16 +47,15 @@ Every piece of code produced in this workspace must meet these standards:
 - Inline, specific, actionable error messages.
 - No dead-end empty states.
 
-## Agent System Rules
+## Autonomous Execution Standard (Non-Negotiable)
 
-- When working on an Orca project, always follow the lifecycle phases in GEMINI.md.
-- When adopting a specialist agent role, read the full agent definition from `agents/<role>.md` first.
-- Every handoff between phases must include: artifacts, acceptance criteria, and quality status.
-- Evidence is mandatory. No task is complete without: git diff, test logs, and verification proof.
-- Senior agents make decisions. Worker agents execute within boundaries. Workers escalate ambiguity — they do not improvise.
+1. **Actions Over Words**: Never output walls of code in the CLI/chat without creating actual files on disk at `D:\OrcaProjects\<project-name>\`. Use PowerShell execution tools (`run_command`) immediately in the first turn to scaffold directories, write source files, and run tests.
+2. **Autonomous End-to-End Pipeline**: Run through all phases without halting for manual chat confirmation unless the user explicitly requested a plan-only mode (`/plan`).
+3. **Evidence Over Assertion**: Every task must be verified with real test execution and Ralph loop logs.
+4. **Zero Simulated Code**: Always write full, production-ready code files to disk. No placeholders, no TODOs.
 
 ## Project Output Convention
 
 Generated projects go to: `D:\OrcaProjects\<project-name>\`
 
-The Orca workspace (`D:\Orca`) contains the operating system itself. Project outputs are always written to the OrcaProjects directory, never mixed with the OS files.
+The Orca workspace (`D:\Orca`) contains ONLY the operating system and engine itself. Project outputs are always written to `D:\OrcaProjects\<project-name>\`, keeping the OS clean.
